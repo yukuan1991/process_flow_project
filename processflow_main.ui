@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>processflow_main</class>
- <widget class="QMainWindow" name="processflow_main" >
-  <property name="geometry" >
+ <widget class="QWidget" name="processflow_main">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,16 +10,38 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>processflow_main</string>
+  <property name="windowTitle">
+   <string>Form</string>
   </property>
-  <widget class="QMenuBar" name="menuBar" />
-  <widget class="QToolBar" name="mainToolBar" />
-  <widget class="QWidget" name="centralWidget" />
-  <widget class="QStatusBar" name="statusBar" />
+  <widget class="ribbon" name="process_ribbon">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>-1</y>
+     <width>401</width>
+     <height>111</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QMdiArea" name="mdiarea">
+   <property name="geometry">
+    <rect>
+     <x>-1</x>
+     <y>109</y>
+     <width>401</width>
+     <height>191</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>ribbon</class>
+   <extends>QTabWidget</extends>
+   <header>interface_control/ribbon.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

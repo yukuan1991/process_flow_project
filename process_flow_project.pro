@@ -7,6 +7,8 @@
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+CONFIG -= c++11
+QMAKE_CXXFLAGS += -std=c++1z
 
 TARGET = process_flow_project
 TEMPLATE = app
@@ -24,11 +26,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cc\
-        processflow_main.cc
+    interface_control/ribbon.cc \
+    processflow_main.cc
 
-HEADERS  += processflow_main.h
+HEADERS  += \
+    interface_control/ribbon.h \
+    processflow_main.h
 
-FORMS    += processflow_main.ui
+FORMS    += \
+    processflow_main.ui
 
-DISTFILES += \
-    interface_control/test.txt
+DISTFILES +=
