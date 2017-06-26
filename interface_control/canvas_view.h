@@ -47,9 +47,20 @@ public:
     void set_type (draw_type t);
 
 public:
-    static unique_ptr<canvas_view> make (QWidget *parent = nullptr) { return make_helper (parent); }
-    static unique_ptr<canvas_view> make (QGraphicsScene *scene, QWidget *parent = nullptr)
-    { return make_helper (scene, parent); }
+//    static unique_ptr<canvas_view> make (QWidget *parent = nullptr) { return make_helper (parent); }
+//    static unique_ptr<canvas_view> make (QGraphicsScene *scene, QWidget *parent = nullptr)
+//    { return make_helper (scene, parent); }
+    template<typename ... ARGS>
+    static unique_ptr<canvas_view> make (ARGS && ... args)
+    {
+        unique_ptr<canvas_view> ret (new canvas_view (std::forward<ARGS> (args)...));
+        if (ret == nullptr or ret->init() == false)
+        {
+            return nullptr;
+        }
+        return ret;
+    }
+
     ~canvas_view() ;
 protected:
     bool init();
@@ -57,18 +68,18 @@ protected:
     canvas_view(QWidget *parent = Q_NULLPTR): canvas_body (parent) { }
     canvas_view(QGraphicsScene *scene, QWidget *parent) : canvas_body (scene, parent) { }
 
-    void keyPressEvent (QKeyEvent* event) override;
+//    void keyPressEvent (QKeyEvent* event) override;
 
-    void mousePressEvent (QMouseEvent* event) override;
-    void mouseMoveEvent (QMouseEvent* event) override;
-    void mouseReleaseEvent (QMouseEvent* event) override;
+//    void mousePressEvent (QMouseEvent* event) override;
+//    void mouseMoveEvent (QMouseEvent* event) override;
+//    void mouseReleaseEvent (QMouseEvent* event) override;
 
-    void dragEnterEvent(QDragEnterEvent * event) override;
-    void dragMoveEvent (QDragMoveEvent * event) override;
-    void dropEvent (QDropEvent * event) override;
-    void wheelEvent (QWheelEvent* event) override;
+//    void dragEnterEvent(QDragEnterEvent * event) override;
+//    void dragMoveEvent (QDragMoveEvent * event) override;
+//    void dropEvent (QDropEvent * event) override;
+//    void wheelEvent (QWheelEvent* event) override;
 
-    void closeEvent (QCloseEvent * event) override;
+//    void closeEvent (QCloseEvent * event) override;
 private:
     void finished_product_press_event (QMouseEvent* event);
     void finished_product_release_event (QMouseEvent* event);
@@ -87,16 +98,16 @@ private:
     void select_allitems();
     void delete_selected ();
     void drop_action (QDropEvent* event);
-    template<typename ... ARGS>
-    static unique_ptr<canvas_view> make_helper (ARGS && ... args)
-    {
-        unique_ptr<canvas_view> ret (new canvas_view (std::forward<ARGS> (args)...));
-        if (ret == nullptr or ret->init() == false)
-        {
-            return nullptr;
-        }
-        return ret;
-    }
+//    template<typename ... ARGS>
+//    static unique_ptr<canvas_view> make_helper (ARGS && ... args)
+//    {
+//        unique_ptr<canvas_view> ret (new canvas_view (std::forward<ARGS> (args)...));
+//        if (ret == nullptr or ret->init() == false)
+//        {
+//            return nullptr;
+//        }
+//        return ret;
+//    }
 
 private:
     canvas_view::draw_type type_ = canvas_view::draw_type::NONE;

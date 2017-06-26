@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <QWidget>
+#include "interface_control/canvas_view.h"
+
 
 class QMdiArea;
 
@@ -17,6 +19,10 @@ public:
     QMdiArea* area();
 private:
     void init_conn();
+private:
+    void file_new();
+private:
+    canvas_view* create_canvas_body();
 private:
     Ui::processflow_main *ui;
 };
