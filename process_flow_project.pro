@@ -31,14 +31,19 @@ SOURCES += main.cc\
     processflow_main.cc \
     interface_control/canvas_scene.cc \
     interface_control/canvas_body.cc \
-    interface_control/canvas_view.cc
+    interface_control/canvas_view.cc \
+    interface_control/ribbon_graph.cc \
+    interface_control/about_us_dlg.cc
 
 HEADERS  += \
     interface_control/ribbon.h \
     processflow_main.h \
     interface_control/canvas_scene.h \
     interface_control/canvas_body.h \
-    interface_control/canvas_view.h
+    interface_control/canvas_view.h \
+    interface_control/ribbon.h \
+    interface_control/ribbon_graph.h \
+    interface_control/about_us_dlg.h
 
 FORMS    += \
     processflow_main.ui

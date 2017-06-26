@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QTabBar>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QLabel>
 #include <QStyleOption>
 #include <QLineEdit>
@@ -22,6 +23,8 @@ signals:
     void save ();
     void save_as ();
     void quit ();
+
+    void help();
 public:
     ribbon (QWidget * parent = nullptr);
 private:
@@ -101,4 +104,6 @@ protected:
 
 private:
 };
+
+
 
