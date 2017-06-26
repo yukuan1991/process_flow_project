@@ -18,6 +18,7 @@ class ribbon : public QTabWidget
 signals:
     void create_new ();
     void open ();
+    void print ();
     void save ();
     void save_as ();
     void quit ();

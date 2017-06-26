@@ -8,6 +8,7 @@ processflow_main::processflow_main(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->mdiarea->setViewMode(QMdiArea::TabbedView);
+    ui->mdiarea->setBackground(QBrush(QColor("#D7D7D7")));
     init_conn();
 }
 

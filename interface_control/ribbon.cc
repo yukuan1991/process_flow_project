@@ -73,6 +73,10 @@ void ribbon::setup_menu()
     connect (action.get (), &QAction::triggered, this, &ribbon::open);
     menu->addAction (action.release ());
 
+    action =  make_action (QPixmap ("png/打印.png"), "打印");
+    connect (action.get (), &QAction::triggered, this, &ribbon::print);
+    menu->addAction (action.release ());
+
     action =  make_action (QPixmap ("png/保存.png"), "保存");
     connect (action.get (), &QAction::triggered, this, &ribbon::save);
     menu->addAction (action.release ());
@@ -191,26 +195,14 @@ std::unique_ptr<QWidget> ribbon::ui_window()
     constexpr auto len = 39;
 
     {
-        auto btn = make_button (QPixmap ("png/剪切.png").scaled (len, len), "剪切");
+        auto btn = make_button (QPixmap ("png/放大.png").scaled (len, len), "放大");
 //        connect (btn.get (), &QToolButton::clicked, this, &ribbon::cut);
         upper_layout->addWidget (btn.release ());
     }
 
     {
-        auto btn = make_button (QPixmap ("png/复制.png").scaled (len, len), "复制");
+        auto btn = make_button (QPixmap ("png/缩小.png").scaled (len, len), "缩小");
 //        connect (btn.get (), &QToolButton::clicked, this, &ribbon::copy);
-        upper_layout->addWidget (btn.release ());
-    }
-
-    {
-        auto btn = make_button (QPixmap ("png/粘贴.png").scaled (len, len), "粘贴");
-//        connect (btn.get (), &QToolButton::clicked, this, &ribbon::paste);
-        upper_layout->addWidget (btn.release ());
-    }
-
-    {
-        auto btn = make_button (QPixmap ("png/删除.png").scaled (len, len), "删除");
-//        connect (btn.get (), &QToolButton::clicked, this, &ribbon::del);
         upper_layout->addWidget (btn.release ());
     }
 
@@ -221,31 +213,6 @@ std::unique_ptr<QWidget> ribbon::ui_window()
     layout->addLayout (block1_layout.release (), 0);
 
     auto line = new QFrame(widget.get ());
-    line->setFrameShape(QFrame::VLine);
-    line->setFrameShadow(QFrame::Sunken);
-    layout->addWidget (line);
-
-    auto block2_layout = make_unique<QVBoxLayout> ();
-
-    upper_layout = make_unique<QHBoxLayout> ();
-    upper_layout->setContentsMargins(10, 0, 10, 0);
-
-    {
-        auto btn = make_button (QPixmap ("png/作业项数.png").scaled (len, len), "改变作业项数");
-//        connect (btn.get (), &QToolButton::clicked, this, &ribbon::change_task_count);
-        upper_layout->addWidget (btn.release ());
-    }
-
-    block2_layout->addLayout (upper_layout.release ());
-
-    label = new QLabel ("第二类");
-
-    label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
-    block2_layout->addWidget (label);
-
-    layout->addLayout (block2_layout.release (), 0);
-
-    line = new QFrame(widget.get ());
     line->setFrameShape(QFrame::VLine);
     line->setFrameShadow(QFrame::Sunken);
     layout->addWidget (line);
