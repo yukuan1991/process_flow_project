@@ -21,6 +21,7 @@ private:
     void init_conn();
 private:
     void file_new();
+    void help_advice();
 private:
     canvas_view* create_canvas_body();
 private:
