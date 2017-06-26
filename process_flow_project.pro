@@ -38,7 +38,8 @@ HEADERS  += \
     processflow_main.h \
     interface_control/canvas_scene.h \
     interface_control/canvas_body.h \
-    interface_control/canvas_view.h
+    interface_control/canvas_view.h \
+    interface_control/ribbon.h
 
 FORMS    += \
     processflow_main.ui
