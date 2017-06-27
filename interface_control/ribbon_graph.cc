@@ -134,24 +134,22 @@ void ribbon_graph::on_button_pressed()
         return;
     }
 
-    emit graph_clicked(name);
-
     ///
-//    if (button->isChecked())
-//    {
-//        for (auto it : imp->buttons)
-//        {
-//            if (it != button)
-//            {
-//                it->setChecked (false);
-//            }
-//        }
-//        emit graph_clicked(name);
-//    }
-//    else
-//    {
-//        emit graph_clicked("");
-//    }
+    if (button->isChecked())
+    {
+        for (auto it : buttons_)
+        {
+            if (it != button)
+            {
+                it->setChecked (false);
+            }
+        }
+        emit graph_clicked(name);
+    }
+    else
+    {
+        emit graph_clicked("");
+    }
 }
 
 //void ribbon_graph::paintEvent(QPaintEvent *)

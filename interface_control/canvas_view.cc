@@ -2,7 +2,6 @@
 #include <QMouseEvent>
 #include "json.hpp"
 #include "item/item.h"
-#include <QDebug>
 
 using nlohmann::json;
 
@@ -30,6 +29,23 @@ bool canvas_view::init()
     connect (this, &canvas_view::saved, [this]{ unsaved_content_ = false; });
 
     return true;
+}
+
+void canvas_view::keyPressEvent(QKeyEvent *event)
+{
+    QGraphicsView::keyPressEvent(event);
+
+    if (event->modifiers() & Qt::CTRL and event->key() == Qt::Key_A)
+    {
+        select_allitems();
+        event->accept();
+    }
+
+    if (event->key() == Qt::Key_Delete)
+    {
+        delete_selected();
+        event->accept();
+    }
 }
 
 void canvas_view::mousePressEvent(QMouseEvent *event)
@@ -465,6 +481,29 @@ void canvas_view::brokenline_release_event(QMouseEvent *event)
     Q_UNUSED(event);
 }
 
+void canvas_view::select_allitems()
+{
+    const auto list = items ();
+    for (auto & item : list)
+    {
+        item->setSelected(true);
+    }
+}
+
+void canvas_view::delete_selected()
+{
+    const auto selected_items = scene ()->selectedItems();
+    for (auto & it : selected_items)
+    {
+        delete it;
+    }
+
+    if (!selected_items.empty())
+    {
+        emit scene_item_changed ();
+    }
+}
+
 canvas_view::draw_type canvas_view::return_type()
 {
     return type_;
@@ -472,7 +511,6 @@ canvas_view::draw_type canvas_view::return_type()
 
 void canvas_view::set_type_string(const QString &type)
 {
-    qDebug() << type;
     if (type == "产成品")
     {
         set_type(draw_type::FINISHEDPRODUCTED);
