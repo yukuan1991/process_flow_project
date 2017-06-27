@@ -25,6 +25,8 @@ signals:
     void quit ();
 
     void help();
+
+    void graph_clicked(const QString &);
 public:
     ribbon (QWidget * parent = nullptr);
 private:

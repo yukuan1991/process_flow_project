@@ -6,6 +6,8 @@
 class ribbon_graph : public QFrame
 {
     Q_OBJECT
+signals:
+    void graph_clicked (const QString&);
 public:
     ribbon_graph(QWidget *parent = 0);
 
@@ -16,6 +18,7 @@ public:
 //    void paintEvent(QPaintEvent*) override;
 
 private:
+    void on_button_pressed();
 };
 
 

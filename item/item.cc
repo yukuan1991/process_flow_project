@@ -4,7 +4,7 @@
 #include <algorithm>
 //#include "item/machining.h"
 //#include "item/checkout.h"
-//#include "item/raw_material.h"
+#include "item/raw_material.h"
 //#include "item/finished_product.h"
 //#include "item/broken_line.h"
 //#include "item/straight_line.h"
@@ -185,7 +185,7 @@ unique_ptr<item> item::make(nlohmann::json full_data, item *parent) try
 
     if (type == "原材料")
     {
-//        return raw_material::make(std::move(data), pos, parent);
+        return raw_material::make(std::move(data), pos, parent);
         return nullptr;
 
     }

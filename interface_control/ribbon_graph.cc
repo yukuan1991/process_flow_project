@@ -46,6 +46,10 @@ ribbon_graph::ribbon_graph(QWidget *parent)
     button_straight_line->setToolTip("直线");
     button_broken_line->setToolTip("折线");
 
+    button_raw_material->setObjectName("原材料");
+
+    connect(button_raw_material, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
+
 
 
     QVBoxLayout* layout = new QVBoxLayout;
@@ -75,7 +79,41 @@ ribbon_graph::ribbon_graph(QWidget *parent)
     setLayout(layout);
 
 //    setFixedWidth(150);
-//    setFixedHeight(200);
+    //    setFixedHeight(200);
+}
+
+void ribbon_graph::on_button_pressed()
+{
+    auto button = dynamic_cast<ribbon_tool*>(sender ()); //返回一个指向信号发送方的指针
+    if (button == nullptr)
+    {
+        return;
+    }
+    auto name = button->objectName();
+
+    if (name.isEmpty())
+    {
+        return;
+    }
+
+    emit graph_clicked(name);
+
+    ///
+//    if (button->isChecked())
+//    {
+//        for (auto it : imp->buttons)
+//        {
+//            if (it != button)
+//            {
+//                it->setChecked (false);
+//            }
+//        }
+//        emit graph_clicked(name);
+//    }
+//    else
+//    {
+//        emit graph_clicked("");
+//    }
 }
 
 //void ribbon_graph::paintEvent(QPaintEvent *)
