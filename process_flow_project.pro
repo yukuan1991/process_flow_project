@@ -36,7 +36,8 @@ SOURCES += main.cc\
     interface_control/about_us_dlg.cc \
     item/raw_material.cc \
     item/item.cc \
-    item/machining.cc
+    item/machining.cc \
+    item/checkout.cc
 
 HEADERS  += \
     interface_control/ribbon.h \
@@ -50,7 +51,8 @@ HEADERS  += \
     item/raw_material.h \
     item/item.h \
     utility/interface.hpp \
-    item/machining.h
+    item/machining.h \
+    item/checkout.h
 
 FORMS    += \
     processflow_main.ui

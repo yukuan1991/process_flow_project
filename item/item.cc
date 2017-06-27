@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <algorithm>
 #include "item/machining.h"
-//#include "item/checkout.h"
+#include "item/checkout.h"
 #include "item/raw_material.h"
 //#include "item/finished_product.h"
 //#include "item/broken_line.h"
@@ -178,7 +178,7 @@ unique_ptr<item> item::make(nlohmann::json full_data, item *parent) try
     }
     if (type == "检验")
     {
-//        return checkout::make(std::move(data), pos, parent);
+        return checkout::make(std::move(data), pos, parent);
         return nullptr;
 
     }

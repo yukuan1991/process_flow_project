@@ -47,6 +47,10 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
         machining_press_event(event);
         canvas_body::mousePressEvent (event);
         break;
+    case canvas_view::draw_type::CHECKOUT:
+        checkout_press_event(event);
+        canvas_body::mousePressEvent (event);
+        break;
 //    case canvas_view::draw_type::STRAIGHTLINE:
 //        straightline_press_event(event);
 //        break;
@@ -137,6 +141,44 @@ void canvas_view::machining_release_event(QMouseEvent *event)
     emit draw_finished();
 }
 
+void canvas_view::checkout_press_event(QMouseEvent *event)
+{
+    begin_ = mapToScene (event->pos());
+    json data
+    {
+        {"pos",
+            {
+                {"x", begin_.x()},
+                {"y", begin_.y()}
+            }
+        },
+        {"detail",
+            {
+                {"type", "检验"},
+                {"attribute", ""}
+            }
+        }
+    };
+//    auto rawmaterial = raw_material::make(begin_);
+    auto checkout = item::make(std::move(data));
+    const auto rect_center = checkout->boundingRect().center();
+    auto center_pos = begin_ - rect_center;
+    checkout->setPos(center_pos);
+    checkout->setSelected(true);
+    scene()->addItem(checkout.get());
+    connect(checkout.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
+    connect(checkout.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
+
+    emit scene_item_changed ();
+    checkout.release();
+}
+
+void canvas_view::checkout_release_event(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    emit draw_finished();
+}
+
 void canvas_view::rawmaterial_press_event(QMouseEvent *event)
 {
     begin_ = mapToScene (event->pos());
@@ -193,6 +235,10 @@ void canvas_view::set_type_string(const QString &type)
     else if (type == "加工")
     {
         set_type(draw_type::MACHINING);
+    }
+    else if (type == "检验")
+    {
+        set_type(draw_type::CHECKOUT);
     }
     else if (type == "连线1")
     {

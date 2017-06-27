@@ -21,6 +21,7 @@ public:
         FINISHEDPRODUCTED,
         RAWMATERIAL,
         MACHINING,
+        CHECKOUT,
         STRAIGHTLINE,
         BROKENLINE
     };
@@ -84,6 +85,9 @@ protected:
 private:
     void machining_press_event (QMouseEvent* event);
     void machining_release_event (QMouseEvent* event);
+
+    void checkout_press_event (QMouseEvent* event);
+    void checkout_release_event (QMouseEvent* event);
 
     void finished_product_press_event (QMouseEvent* event);
     void finished_product_release_event (QMouseEvent* event);
