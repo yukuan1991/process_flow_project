@@ -13,26 +13,29 @@
   <property name="windowTitle">
    <string>Process Flow Sheet</string>
   </property>
-  <widget class="ribbon" name="process_ribbon">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>-1</y>
-     <width>401</width>
-     <height>111</height>
-    </rect>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
    </property>
-  </widget>
-  <widget class="QMdiArea" name="mdiarea">
-   <property name="geometry">
-    <rect>
-     <x>-1</x>
-     <y>109</y>
-     <width>401</width>
-     <height>191</height>
-    </rect>
+   <property name="leftMargin">
+    <number>0</number>
    </property>
-  </widget>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="ribbon" name="process_ribbon"/>
+   </item>
+   <item>
+    <widget class="QMdiArea" name="mdiarea"/>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>
