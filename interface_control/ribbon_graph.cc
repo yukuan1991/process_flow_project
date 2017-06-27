@@ -7,8 +7,11 @@
 #include <QPainter>
 
 ribbon_graph::ribbon_graph(QWidget *parent)
-    :QWidget (parent)
+    : QFrame (parent)
 {
+    setFrameShape(QFrame::Box);
+    setFrameShadow(QFrame::Raised);
+
     QLabel* label_graph = new QLabel("图形", this);
     QLabel* label_line = new QLabel("连线", this);
 
@@ -58,16 +61,16 @@ ribbon_graph::ribbon_graph(QWidget *parent)
 
     setLayout(layout);
 
-    setFixedWidth(150);
-    setFixedHeight(200);
+//    setFixedWidth(150);
+//    setFixedHeight(200);
 }
 
-void ribbon_graph::paintEvent(QPaintEvent *)
-{
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-}
+//void ribbon_graph::paintEvent(QPaintEvent *)
+//{
+//    QStyleOption opt;
+//    opt.init(this);
+//    QPainter p(this);
+//    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+//}
 
 

@@ -105,11 +105,11 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
     block1_layout->setContentsMargins (1, 1, 1, 1);
     block1_layout->setSpacing (1);
 
-    auto upper_layout = make_unique<QHBoxLayout> ();
-    upper_layout->setContentsMargins(10, 0, 10, 0);
-    upper_layout->setSpacing (10);
+//    auto upper_layout = make_unique<QVBoxLayout> ();
+//    upper_layout->setContentsMargins(10, 0, 10, 0);
+//    upper_layout->setSpacing (10);
 
-    constexpr auto len = 39;
+//    constexpr auto len = 39;
 
 //    {
 //        auto btn = make_button (QPixmap ("png/剪切.png").scaled (len, len), "剪切");
@@ -146,40 +146,43 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
 //    line->setFrameShadow(QFrame::Sunken);
 //    layout->addWidget (line);
 
-    auto block2_layout = make_unique<QVBoxLayout> ();
+//    auto block2_layout = make_unique<QVBoxLayout> ();
 
-    upper_layout = make_unique<QHBoxLayout> ();
-    upper_layout->setContentsMargins(10, 0, 10, 0);
+//    upper_layout = make_unique<QHBoxLayout> ();
+//    upper_layout->setContentsMargins(10, 10, 10, 0);
 
     {
+
+        auto graph = new ribbon_graph (this);
+        block1_layout->addWidget(graph);
 //        auto btn = make_button (QPixmap ("png/图形.png").scaled (len, len), "图形");
-        QIcon icon("png/图形.png");
-        QString text("图形");
-        auto graph = new ribbon_tool (this);
-        graph->setObjectName("ribbon_tool_graph");
-        graph->setIconSize (QSize(39, 39));
-        graph->setIcon (icon);
-        graph->setText (text);
-        graph->setToolButtonStyle (Qt::ToolButtonTextUnderIcon);
-        graph->setPopupMode(QToolButton::InstantPopup);
-        graph->setAutoRaise (true);
-        auto menu = new ribbon_menu(graph);
-        graph->setMenu (menu);
-        auto action = make_unique<QWidgetAction> (this);
-        action->setDefaultWidget(new ribbon_graph(this));
-        menu->addAction(action.release());
+//        QIcon icon("png/图形.png");
+//        QString text("图形");
+//        auto graph = new ribbon_tool (this);
+//        graph->setObjectName("ribbon_tool_graph");
+//        graph->setIconSize (QSize(len, len));
+//        graph->setIcon (icon);
+//        graph->setText (text);
+//        graph->setToolButtonStyle (Qt::ToolButtonTextUnderIcon);
+//        graph->setPopupMode(QToolButton::InstantPopup);
+//        graph->setAutoRaise (true);
+//        auto menu = new ribbon_menu(graph);
+//        graph->setMenu (menu);
+//        auto action = make_unique<QWidgetAction> (this);
+//        action->setDefaultWidget(new ribbon_graph(this));
+//        menu->addAction(action.release());
 //        connect (btn.get (), &QToolButton::clicked, this, &ribbon::change_task_count);
-        upper_layout->addWidget (graph);
+//        upper_layout->addWidget (graph);
     }
 
-    block2_layout->addLayout (upper_layout.release ());
+//    block1_layout->addLayout (upper_layout.release ());
 
-    auto label = new QLabel ("第一类");
+    auto label = new QLabel ("绘图");
 
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
-    block2_layout->addWidget (label);
+    block1_layout->addWidget (label);
 
-    layout->addLayout (block2_layout.release (), 0);
+    layout->addLayout (block1_layout.release (), 0);
 
     auto line = new QFrame(widget.get ());
     line->setFrameShape(QFrame::VLine);

@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include <QWidget>
+#include <QFrame>
 #include <QToolButton>
 #include "ribbon.h"
 
-class ribbon_graph : public QWidget
+class ribbon_graph : public QFrame
 {
     Q_OBJECT
 public:
@@ -12,8 +12,8 @@ public:
     ~ribbon_graph()
     {}
 
-protected:
-    void paintEvent(QPaintEvent*) override;
+//protected:
+//    void paintEvent(QPaintEvent*) override;
 
 private:
 };
