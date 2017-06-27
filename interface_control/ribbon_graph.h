@@ -1,8 +1,15 @@
 ﻿#pragma once
 #include <QFrame>
 #include <QToolButton>
-#include "ribbon.h"
 #include <vector>
+
+class ribbon_tool : public QToolButton
+{
+    Q_OBJECT
+public:
+    template<typename ... Args>
+    ribbon_tool (Args && ... p) : QToolButton (std::forward<Args> (p)...) {}
+};
 
 class ribbon_graph : public QFrame
 {

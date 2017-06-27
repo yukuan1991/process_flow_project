@@ -12,8 +12,7 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QMenu>
-
-class ribbon_graph;
+#include "ribbon_graph.h"
 
 class ribbon : public QTabWidget
 {
@@ -58,14 +57,6 @@ class ribbon_menu : public QMenu
 public:
     template<typename ... Args>
     ribbon_menu (Args && ... p) : QMenu (std::forward<Args> (p)...) {}
-};
-
-class ribbon_tool : public QToolButton
-{
-    Q_OBJECT
-public:
-    template<typename ... Args>
-    ribbon_tool (Args && ... p) : QToolButton (std::forward<Args> (p)...) {}
 };
 
 class ribbon_bar : public QTabBar
