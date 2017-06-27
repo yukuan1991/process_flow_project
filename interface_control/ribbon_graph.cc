@@ -49,10 +49,12 @@ ribbon_graph::ribbon_graph(QWidget *parent)
     button_raw_material->setObjectName("原材料");
     button_machining->setObjectName("加工");
     button_checkout->setObjectName("检验");
+    button_finished_product->setObjectName("产成品");
 
     connect(button_raw_material, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
     connect(button_machining, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
     connect(button_checkout, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
+    connect(button_finished_product, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
 
 
 

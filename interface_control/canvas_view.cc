@@ -35,10 +35,10 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
 {
     switch (return_type())
     {
-//    case canvas_view::draw_type::FINISHEDPRODUCTED:
-//        finished_product_press_event(event);
-//        canvas_body::mousePressEvent (event);
-//        break;
+    case canvas_view::draw_type::FINISHEDPRODUCTED:
+        finished_product_press_event(event);
+        canvas_body::mousePressEvent (event);
+        break;
     case canvas_view::draw_type::RAWMATERIAL:
         rawmaterial_press_event(event);
         canvas_body::mousePressEvent (event);
@@ -174,6 +174,43 @@ void canvas_view::checkout_press_event(QMouseEvent *event)
 }
 
 void canvas_view::checkout_release_event(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    emit draw_finished();
+}
+
+void canvas_view::finished_product_press_event(QMouseEvent *event)
+{
+    begin_ = mapToScene (event->pos());
+    json data
+    {
+        {"pos",
+            {
+                {"x", begin_.x()},
+                {"y", begin_.y()}
+            }
+        },
+        {"detail",
+            {
+                {"type", "产成品"},
+                {"attribute", ""}
+            }
+        }
+    };
+
+    auto finished_product = item::make(std::move(data));
+    const auto rect_center = finished_product->boundingRect().center();
+    auto center_pos = begin_ - rect_center;
+    finished_product->setPos(center_pos);
+    scene()->addItem(finished_product.get());
+    connect(finished_product.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
+    connect(finished_product.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
+
+    emit scene_item_changed ();
+    finished_product.release();
+}
+
+void canvas_view::finished_product_release_event(QMouseEvent *event)
 {
     Q_UNUSED(event);
     emit draw_finished();

@@ -5,7 +5,7 @@
 #include "item/machining.h"
 #include "item/checkout.h"
 #include "item/raw_material.h"
-//#include "item/finished_product.h"
+#include "item/finished_product.h"
 //#include "item/broken_line.h"
 //#include "item/straight_line.h"
 #include <QGraphicsScene>
@@ -192,7 +192,7 @@ unique_ptr<item> item::make(nlohmann::json full_data, item *parent) try
 
     if (type == "产成品")
     {
-//        return finished_product::make(std::move(data), pos, parent);
+        return finished_product::make(std::move(data), pos, parent);
         return nullptr;
 
     }
