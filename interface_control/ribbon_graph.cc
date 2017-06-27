@@ -46,15 +46,25 @@ ribbon_graph::ribbon_graph(QWidget *parent)
     button_straight_line->setToolTip("直线");
     button_broken_line->setToolTip("折线");
 
+
+
     button_raw_material->setObjectName("原材料");
     button_machining->setObjectName("加工");
     button_checkout->setObjectName("检验");
     button_finished_product->setObjectName("产成品");
 
+    button_straight_line->setObjectName("直线");
+    button_broken_line->setObjectName("折线");
+
+
+
     connect(button_raw_material, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
     connect(button_machining, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
     connect(button_checkout, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
     connect(button_finished_product, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
+
+    connect(button_straight_line, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
+    connect(button_broken_line, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
 
 
 

@@ -6,8 +6,8 @@
 #include "item/checkout.h"
 #include "item/raw_material.h"
 #include "item/finished_product.h"
-//#include "item/broken_line.h"
-//#include "item/straight_line.h"
+#include "item/broken_line.h"
+#include "item/straight_line.h"
 #include <QGraphicsScene>
 
 using std::find_if;
@@ -197,16 +197,16 @@ unique_ptr<item> item::make(nlohmann::json full_data, item *parent) try
 
     }
 
-    if (type == "连线1")
+    if (type == "直线")
     {
-//        return straight_line::make(std::move(data), pos, parent);
+        return straight_line::make(std::move(data), pos, parent);
         return nullptr;
 
     }
 
-    if (type == "连线2")
+    if (type == "折线")
     {
-//        return broken_line::make(std::move(data), pos, parent);
+        return broken_line::make(std::move(data), pos, parent);
         return nullptr;
 
     }
