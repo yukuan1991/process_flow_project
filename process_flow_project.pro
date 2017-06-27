@@ -33,7 +33,9 @@ SOURCES += main.cc\
     interface_control/canvas_body.cc \
     interface_control/canvas_view.cc \
     interface_control/ribbon_graph.cc \
-    interface_control/about_us_dlg.cc
+    interface_control/about_us_dlg.cc \
+    item/raw_material.cc \
+    item/item.cc
 
 HEADERS  += \
     interface_control/ribbon.h \
@@ -43,7 +45,10 @@ HEADERS  += \
     interface_control/canvas_view.h \
     interface_control/ribbon.h \
     interface_control/ribbon_graph.h \
-    interface_control/about_us_dlg.h
+    interface_control/about_us_dlg.h \
+    item/raw_material.h \
+    item/item.h \
+    utility/interface.hpp
 
 FORMS    += \
     processflow_main.ui
