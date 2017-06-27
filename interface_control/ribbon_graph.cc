@@ -26,13 +26,26 @@ ribbon_graph::ribbon_graph(QWidget *parent)
     auto button_straight_line = new ribbon_tool(this);
     auto button_broken_line = new ribbon_tool(this);
 
+
+
     button_raw_material->setText("原材料");
-    button_machining->setText("加工");
+    button_machining->setText("加工");    
     button_checkout->setText("检验");
     button_finished_product->setText("产成品");
 
     button_straight_line->setText("直线");
     button_broken_line->setText("折线");
+
+
+
+    button_raw_material->setToolTip("原材料");
+    button_machining->setToolTip("加工");
+    button_checkout->setToolTip("检验");
+    button_finished_product->setToolTip("产成品");
+
+    button_straight_line->setToolTip("直线");
+    button_broken_line->setToolTip("折线");
+
 
 
     QVBoxLayout* layout = new QVBoxLayout;
