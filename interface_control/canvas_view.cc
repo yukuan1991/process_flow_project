@@ -43,6 +43,10 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
         rawmaterial_press_event(event);
         canvas_body::mousePressEvent (event);
         break;
+    case canvas_view::draw_type::MACHINING:
+        machining_press_event(event);
+        canvas_body::mousePressEvent (event);
+        break;
 //    case canvas_view::draw_type::STRAIGHTLINE:
 //        straightline_press_event(event);
 //        break;
@@ -93,6 +97,44 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
         canvas_body::mouseReleaseEvent (event);
         break;
     }
+}
+
+void canvas_view::machining_press_event(QMouseEvent *event)
+{
+    begin_ = mapToScene (event->pos());
+    json data
+    {
+        {"pos",
+            {
+                {"x", begin_.x()},
+                {"y", begin_.y()}
+            }
+        },
+        {"detail",
+            {
+                {"type", "加工"},
+                {"attribute", ""}
+            }
+        }
+    };
+//    auto rawmaterial = raw_material::make(begin_);
+    auto machining = item::make(std::move(data));
+    const auto rect_center = machining->boundingRect().center();
+    auto center_pos = begin_ - rect_center;
+    machining->setPos(center_pos);
+    machining->setSelected(true);
+    scene()->addItem(machining.get());
+    connect(machining.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
+    connect(machining.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
+
+    emit scene_item_changed ();
+    machining.release();
+}
+
+void canvas_view::machining_release_event(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    emit draw_finished();
 }
 
 void canvas_view::rawmaterial_press_event(QMouseEvent *event)
@@ -147,6 +189,10 @@ void canvas_view::set_type_string(const QString &type)
     else if (type == "原材料")
     {
         set_type(draw_type::RAWMATERIAL);
+    }
+    else if (type == "加工")
+    {
+        set_type(draw_type::MACHINING);
     }
     else if (type == "连线1")
     {

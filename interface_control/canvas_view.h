@@ -20,6 +20,7 @@ public:
         NONE,
         FINISHEDPRODUCTED,
         RAWMATERIAL,
+        MACHINING,
         STRAIGHTLINE,
         BROKENLINE
     };
@@ -81,6 +82,9 @@ protected:
 
 //    void closeEvent (QCloseEvent * event) override;
 private:
+    void machining_press_event (QMouseEvent* event);
+    void machining_release_event (QMouseEvent* event);
+
     void finished_product_press_event (QMouseEvent* event);
     void finished_product_release_event (QMouseEvent* event);
 

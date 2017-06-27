@@ -2,7 +2,7 @@
 #include <QGraphicsItem>
 #include <QPainter>
 #include <algorithm>
-//#include "item/machining.h"
+#include "item/machining.h"
 //#include "item/checkout.h"
 #include "item/raw_material.h"
 //#include "item/finished_product.h"
@@ -172,7 +172,7 @@ unique_ptr<item> item::make(nlohmann::json full_data, item *parent) try
     const QPointF pos (x, y);
     if (type == "加工")
     {
-//        return machining::make(std::move(data), pos, parent);
+        return machining::make(std::move(data), pos, parent);
         return nullptr;
 
     }

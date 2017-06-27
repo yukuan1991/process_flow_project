@@ -47,8 +47,10 @@ ribbon_graph::ribbon_graph(QWidget *parent)
     button_broken_line->setToolTip("折线");
 
     button_raw_material->setObjectName("原材料");
+    button_machining->setObjectName("加工");
 
     connect(button_raw_material, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
+    connect(button_machining, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
 
 
 
