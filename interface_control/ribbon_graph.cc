@@ -57,6 +57,19 @@ ribbon_graph::ribbon_graph(QWidget *parent)
     button_broken_line->setObjectName("折线");
 
 
+    buttons_.emplace_back(button_raw_material);
+    buttons_.emplace_back(button_machining);
+    buttons_.emplace_back(button_checkout);
+    buttons_.emplace_back(button_finished_product);
+
+    buttons_.emplace_back(button_straight_line);
+    buttons_.emplace_back(button_broken_line);
+
+    for (auto it : buttons_)
+    {
+        it->setCheckable(true);
+    }
+
 
     connect(button_raw_material, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
     connect(button_machining, &ribbon_tool::clicked, this, &ribbon_graph::on_button_pressed);
@@ -96,6 +109,15 @@ ribbon_graph::ribbon_graph(QWidget *parent)
 
 //    setFixedWidth(150);
     //    setFixedHeight(200);
+}
+
+void ribbon_graph::reset_status()
+{
+    for (auto it : buttons_)
+    {
+        it->setChecked(false);
+    }
+    emit graph_clicked("");
 }
 
 void ribbon_graph::on_button_pressed()

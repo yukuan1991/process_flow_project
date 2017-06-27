@@ -2,6 +2,7 @@
 #include <QFrame>
 #include <QToolButton>
 #include "ribbon.h"
+#include <vector>
 
 class ribbon_graph : public QFrame
 {
@@ -14,11 +15,14 @@ public:
     ~ribbon_graph()
     {}
 
+    void reset_status ();
 //protected:
 //    void paintEvent(QPaintEvent*) override;
 
 private:
     void on_button_pressed();
+private:
+    std::vector<ribbon_tool*> buttons_;
 };
 
 

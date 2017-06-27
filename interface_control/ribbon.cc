@@ -14,6 +14,7 @@
 #include "interface_control/ribbon_graph.h"
 
 using namespace std;
+using std::unique_ptr;
 
 ribbon::ribbon(QWidget *parent)
     : QTabWidget(parent)
@@ -24,6 +25,11 @@ ribbon::ribbon(QWidget *parent)
     setMinimumHeight (130);
 
     setup_ui();
+}
+
+void ribbon::reset_status()
+{
+    graph_->reset_status();
 }
 
 std::unique_ptr<QToolButton> ribbon::make_button(const QPixmap &icon, const QString &text)
@@ -153,10 +159,11 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
 
     {
 
-        auto graph = new ribbon_graph (this);
-        connect(graph, &ribbon_graph::graph_clicked,
+//        auto graph = new ribbon_graph (this);
+        graph_ = make_unique<ribbon_graph> (this);
+        connect(graph_.get(), &ribbon_graph::graph_clicked,
                 this, &ribbon::graph_clicked);
-        block1_layout->addWidget(graph);
+        block1_layout->addWidget(graph_.get());
 //        auto btn = make_button (QPixmap ("png/图形.png").scaled (len, len), "图形");
 //        QIcon icon("png/图形.png");
 //        QString text("图形");

@@ -47,7 +47,7 @@ canvas_view *processflow_main::create_canvas_body()
     canvas->setWindowState(Qt::WindowMaximized);
 
     connect (ui->process_ribbon, &ribbon::graph_clicked, ptr_canvas, &canvas_view::set_type_string);
-//    connect (ptr_canvas, &canvas_view::draw_finished, imp->draw_widget.get(), &drag_widget::reset_status);
+    connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
 //    connect (ptr_canvas, &canvas_view::selection_changed, this, &sheetflow_main::canvas_selection);
 
 //    connect (ptr_canvas, &canvas_view::view_closed, this, &sheetflow_main::on_view_closed, Qt::QueuedConnection);

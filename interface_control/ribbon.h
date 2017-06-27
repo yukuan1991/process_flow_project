@@ -13,6 +13,8 @@
 #include <QPainter>
 #include <QMenu>
 
+class ribbon_graph;
+
 class ribbon : public QTabWidget
 {
     Q_OBJECT
@@ -29,6 +31,9 @@ signals:
     void graph_clicked(const QString &);
 public:
     ribbon (QWidget * parent = nullptr);
+
+    void reset_status();
+
 private:
     static std::unique_ptr<QToolButton> make_button (const QPixmap & icon, const QString & text);
     void setup_ui ();
@@ -36,6 +41,7 @@ private:
     std::unique_ptr<QWidget> ui_edit ();
     std::unique_ptr<QWidget> ui_window ();
     std::unique_ptr<QWidget> ui_help ();
+    std::unique_ptr<ribbon_graph> graph_;
 };
 
 class ribbon_button : public QPushButton

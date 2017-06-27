@@ -2,6 +2,7 @@
 #include <QMouseEvent>
 #include "json.hpp"
 #include "item/item.h"
+#include <QDebug>
 
 using nlohmann::json;
 
@@ -96,6 +97,12 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
         break;
     case canvas_view::draw_type::BROKENLINE:
         brokenline_release_event(event);
+        break;
+    case canvas_view::draw_type::MACHINING:
+        machining_release_event(event);
+        break;
+    case canvas_view::draw_type::CHECKOUT:
+        checkout_release_event(event);
         break;
     default:
         canvas_body::mouseReleaseEvent (event);
@@ -404,7 +411,7 @@ void canvas_view::brokenline_press_event(QMouseEvent *event)
             {
                 "detail",
                 {
-                    {"type", "连线2"},
+                    {"type", "折线"},
                     {"points", json_points}
                 }
             }
@@ -465,6 +472,7 @@ canvas_view::draw_type canvas_view::return_type()
 
 void canvas_view::set_type_string(const QString &type)
 {
+    qDebug() << type;
     if (type == "产成品")
     {
         set_type(draw_type::FINISHEDPRODUCTED);
