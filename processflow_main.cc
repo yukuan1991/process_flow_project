@@ -49,7 +49,7 @@ canvas_view *processflow_main::create_canvas_body()
 
     connect (ui->process_ribbon, &ribbon::graph_clicked, ptr_canvas, &canvas_view::set_type_string);
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
-//    connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
+    connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
 
 //    connect (ptr_canvas, &canvas_view::view_closed, this, &sheetflow_main::on_view_closed, Qt::QueuedConnection);
 //    connect (this, &sheetflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
@@ -87,7 +87,7 @@ void processflow_main::canvas_selection(QGraphicsItem *the_item)
         ui->attribute->show ();
     }
 
-    ui->attribute_widget = attribute::make (data).get();
+    ui->attribute_widget = attribute::make (data);
 //    connect (imp->attribute_widget.get (), &attribute::submit, this, &sheetflow_main::on_attribute_clicked);
 //    connect (imp->attribute_widget.get (), &attribute::clear, this, &sheetflow_main::on_attribute_clicked);
 

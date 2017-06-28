@@ -19,9 +19,9 @@ using std::begin;
 using std::end;
 
 
-std::unique_ptr<attribute> attribute::make(nlohmann::json data, QWidget *parent)
+attribute* attribute::make(nlohmann::json data, QWidget *parent)
 {
-    auto ret = std::unique_ptr<attribute>(new attribute(data, parent));
+    auto ret = new attribute(data, parent);
     if (ret == nullptr or !ret->init())
     {
         return nullptr;
@@ -88,32 +88,7 @@ bool attribute::init()
         return true;
 }
 
-//bool attribute::init()
-//{
-//    auto layout = new QGridLayout(this);
 
-//    int i = 0;
-//    for (auto & it : data_)
-//    {
-//        auto label = make_unique<QLabel> (it.first.data (), this);
-//        auto edit = make_unique<QLineEdit> (it.second.data (), this);
-//        edit->setObjectName (it.first.data ());
-
-//        connect (edit.get (), &QLineEdit::textChanged, this, &attribute::set_changed_text);
-
-//        layout->addWidget (label.release (), i, 0);
-//        layout->addWidget (edit.release (), i, 1);
-//        i ++;
-//    }
-
-//    auto button_submit = std::make_unique<QPushButton>("提交", this);
-//    connect (button_submit.get (), &QPushButton::clicked, this, &attribute::submit);
-//    layout->addWidget(button_submit.release(), i, 1);
-//    i ++;
-//    layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), i, 1);
-
-//    return true;
-//}
 
 void attribute::set_changed_text(const QString &text)
 {
@@ -144,23 +119,3 @@ void attribute::clear_edit_text()
     emit clear();
 }
 
-//unique_ptr<attribute> attribute::make(vector<pair<string, string>> data, QWidget *parent)
-//{
-//    auto ret = unique_ptr<attribute> (new attribute (std::move (data), parent));
-
-//    if(ret == nullptr or ret->init () == false)
-//    {
-//        return nullptr;
-//    }
-//    else
-//    {
-//        return ret;
-//    }
-//}
-
-//attribute::attribute(vector<pair<string, string>> data, QWidget *parent)
-//    :QWidget (parent)
-//    ,data_ (std::move (data))
-//{
-
-//}
