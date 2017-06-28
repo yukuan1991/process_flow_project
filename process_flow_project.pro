@@ -32,7 +32,6 @@ SOURCES += main.cc\
     interface_control/canvas_scene.cc \
     interface_control/canvas_body.cc \
     interface_control/canvas_view.cc \
-    interface_control/ribbon_graph.cc \
     interface_control/about_us_dlg.cc \
     item/raw_material.cc \
     item/item.cc \
@@ -41,7 +40,10 @@ SOURCES += main.cc\
     item/finished_product.cc \
     item/broken_line.cc \
     item/straight_line.cc \
-    interface_control/attribute.cc
+    interface_control/attribute.cc \
+    interface_control/draw.cc \
+    interface_control/draw_graph.cc \
+    interface_control/draw_line.cc
 
 HEADERS  += \
     interface_control/ribbon.h \
@@ -50,7 +52,6 @@ HEADERS  += \
     interface_control/canvas_body.h \
     interface_control/canvas_view.h \
     interface_control/ribbon.h \
-    interface_control/ribbon_graph.h \
     interface_control/about_us_dlg.h \
     item/raw_material.h \
     item/item.h \
@@ -60,7 +61,11 @@ HEADERS  += \
     item/finished_product.h \
     item/broken_line.h \
     item/straight_line.h \
-    interface_control/attribute.h
+    interface_control/attribute.h \
+    interface_control/draw.h \
+    interface_control/ribbon_tool.hpp \
+    interface_control/draw_graph.h \
+    interface_control/draw_line.h
 
 FORMS    += \
     processflow_main.ui

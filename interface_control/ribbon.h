@@ -12,7 +12,8 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QMenu>
-#include "ribbon_graph.h"
+#include "interface_control/draw_graph.h"
+#include "interface_control/draw_line.h"
 
 class ribbon : public QTabWidget
 {
@@ -40,7 +41,9 @@ private:
     std::unique_ptr<QWidget> ui_edit ();
     std::unique_ptr<QWidget> ui_window ();
     std::unique_ptr<QWidget> ui_help ();
-    std::unique_ptr<ribbon_graph> graph_;
+    std::unique_ptr<draw_graph> graph_;
+    std::unique_ptr<draw_line> line_;
+
 };
 
 class ribbon_button : public QPushButton
