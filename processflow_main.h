@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <QWidget>
 #include "interface_control/canvas_view.h"
+#include "interface_control/attribute.h"
 
 
 class QMdiArea;
@@ -24,6 +25,7 @@ private:
     void help_advice();
 private:
     canvas_view* create_canvas_body();
+    void canvas_selection (QGraphicsItem* item);
 private:
     Ui::processflow_main *ui;
 };

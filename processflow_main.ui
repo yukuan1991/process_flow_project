@@ -41,8 +41,8 @@
       <widget class="QMdiArea" name="mdiarea"/>
      </item>
      <item>
-      <widget class="QDockWidget" name="dockWidget">
-       <widget class="QWidget" name="dockWidgetContents"/>
+      <widget class="QDockWidget" name="attribute">
+       <widget class="QWidget" name="attribute_widget"/>
       </widget>
      </item>
     </layout>
@@ -57,7 +57,7 @@
   <zorder>horizontalLayoutWidget</zorder>
   <zorder>mdiarea</zorder>
   <zorder>mdiarea</zorder>
-  <zorder>dockWidget</zorder>
+  <zorder>attribute</zorder>
  </widget>
  <customwidgets>
   <customwidget>

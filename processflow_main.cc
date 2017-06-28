@@ -2,6 +2,7 @@
 #include "ui_processflow_main.h"
 #include <QMdiArea>
 #include "interface_control/about_us_dlg.h"
+#include "item/item.h"
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -48,7 +49,7 @@ canvas_view *processflow_main::create_canvas_body()
 
     connect (ui->process_ribbon, &ribbon::graph_clicked, ptr_canvas, &canvas_view::set_type_string);
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
-//    connect (ptr_canvas, &canvas_view::selection_changed, this, &sheetflow_main::canvas_selection);
+//    connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
 
 //    connect (ptr_canvas, &canvas_view::view_closed, this, &sheetflow_main::on_view_closed, Qt::QueuedConnection);
 //    connect (this, &sheetflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
@@ -58,6 +59,42 @@ canvas_view *processflow_main::create_canvas_body()
     ui->mdiarea->addSubWindow(canvas.release ());
 
     return ptr_canvas;
+}
+
+void processflow_main::canvas_selection(QGraphicsItem *the_item)
+{
+    if (the_item == nullptr)
+    {
+        ui->attribute->setWidget (nullptr);
+        return;
+    }
+
+    auto casted_item = dynamic_cast<item*> (the_item);
+
+    if (casted_item == nullptr)
+    {
+        return;
+    }
+
+    auto & data = casted_item->attribute_data ();
+    if (data.empty ())
+    {
+        return;
+    }
+
+    if (ui->attribute->isHidden ())
+    {
+        ui->attribute->show ();
+    }
+
+    ui->attribute_widget = attribute::make (data).get();
+//    connect (imp->attribute_widget.get (), &attribute::submit, this, &sheetflow_main::on_attribute_clicked);
+//    connect (imp->attribute_widget.get (), &attribute::clear, this, &sheetflow_main::on_attribute_clicked);
+
+//    connect (imp->attribute_widget.get (),&attribute::submit, [this]{ emit attribute_changed(); });
+//    connect (imp->attribute_widget.get (),&attribute::clear, [this]{ emit attribute_changed(); });
+
+    ui->attribute->setWidget (ui->attribute_widget);
 }
 
 void processflow_main::init_conn()
