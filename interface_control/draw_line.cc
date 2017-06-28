@@ -31,6 +31,9 @@ draw_line::draw_line(QWidget *parent)
 
     QHBoxLayout* layout = new QHBoxLayout;
 
+    layout->setContentsMargins(1, 1, 1, 1);
+    layout->setSpacing(1);
+
     layout->addWidget(button_straight_line);
     layout->addWidget(button_broken_line);
 

@@ -33,9 +33,31 @@
     <widget class="ribbon" name="process_ribbon"/>
    </item>
    <item>
-    <widget class="QMdiArea" name="mdiarea"/>
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,1">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QMdiArea" name="mdiarea"/>
+     </item>
+     <item>
+      <widget class="QDockWidget" name="dockWidget">
+       <widget class="QWidget" name="dockWidgetContents"/>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
+  <zorder>process_ribbon</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>widget</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>horizontalLayoutWidget</zorder>
+  <zorder>mdiarea</zorder>
+  <zorder>mdiarea</zorder>
+  <zorder>dockWidget</zorder>
  </widget>
  <customwidgets>
   <customwidget>
