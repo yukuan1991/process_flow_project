@@ -2,6 +2,7 @@
 #include <QMouseEvent>
 #include "json.hpp"
 #include "item/item.h"
+#include <QDebug>
 
 using nlohmann::json;
 
@@ -511,6 +512,7 @@ canvas_view::draw_type canvas_view::return_type()
 
 void canvas_view::set_type_string(const QString &type)
 {
+    qDebug() << type;
     if (type == "产成品")
     {
         set_type(draw_type::FINISHEDPRODUCTED);

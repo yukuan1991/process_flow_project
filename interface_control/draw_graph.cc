@@ -13,10 +13,14 @@ draw_graph::draw_graph(QWidget *parent)
     auto button_checkout = new ribbon_tool(this);
     auto button_finished_product = new ribbon_tool(this);
 
-    button_raw_material->setText("原材料");
-    button_machining->setText("加工");    
-    button_checkout->setText("检验");
-    button_finished_product->setText("产成品");
+    button_raw_material->setIcon(QIcon("png/原材料.png"));
+    button_raw_material->setIconSize(QSize(50, 30));
+    button_machining->setIcon(QIcon("png/加工.png"));
+    button_machining->setIconSize(QSize(50, 30));
+    button_checkout->setIcon(QIcon("png/检验.png"));
+    button_checkout->setIconSize(QSize(50, 30));
+    button_finished_product->setIcon(QIcon("png/产成品.png"));
+    button_finished_product->setIconSize(QSize(50, 30));
 
     button_raw_material->setToolTip("原材料");
     button_machining->setToolTip("加工");

@@ -32,8 +32,10 @@ signals:
 public:
     ribbon (QWidget * parent = nullptr);
 
+    ///将绘图中的buttons复位
     void reset_status();
-
+    ///将指定的draw类中的buttons复位
+    void reset_buttons(draw*);
 private:
     static std::unique_ptr<QToolButton> make_button (const QPixmap & icon, const QString & text);
     void setup_ui ();

@@ -11,6 +11,7 @@ public:
     draw(QWidget *parent = 0);
     virtual ~draw() {}
     void reset_status ();
+    std::vector<ribbon_tool*> buttons() { return buttons_; }
 protected:
     void on_button_pressed();
 protected:

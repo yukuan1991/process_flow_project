@@ -7,8 +7,10 @@ draw_line::draw_line(QWidget *parent)
     auto button_straight_line = new ribbon_tool(this);
     auto button_broken_line = new ribbon_tool(this);
 
-    button_straight_line->setText("直线");
-    button_broken_line->setText("折线");
+    button_straight_line->setIcon(QIcon("png/直线.png"));
+    button_straight_line->setIconSize(QSize(50, 30));
+    button_broken_line->setIcon(QIcon("png/折线.png"));
+    button_broken_line->setIconSize(QSize(50, 30));
 
     button_straight_line->setToolTip("直线");
     button_broken_line->setToolTip("折线");

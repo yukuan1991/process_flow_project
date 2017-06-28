@@ -23,12 +23,33 @@ ribbon::ribbon(QWidget *parent)
     setMaximumHeight (130);
     setMinimumHeight (130);
 
+    graph_ = make_unique<draw_graph> (this);
+    line_ = make_unique<draw_line> (this);
+
     setup_ui();
 }
 
 void ribbon::reset_status()
 {
     graph_->reset_status();
+    line_->reset_status();
+}
+
+void ribbon::reset_buttons(draw* d)
+{
+    auto buttons = d->buttons();
+    if(buttons.empty())
+    {
+        return;
+    }
+
+    for (auto it : buttons)
+    {
+        if(it->isChecked())
+        {
+            it->setChecked(false);
+        }
+    }
 }
 
 std::unique_ptr<QToolButton> ribbon::make_button(const QPixmap &icon, const QString &text)
@@ -110,10 +131,13 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
     block1_layout->setContentsMargins (1, 1, 1, 1);
     block1_layout->setSpacing (1);
 
+
     {
-        graph_ = make_unique<draw_graph> (this);
         connect(graph_.get(), &draw_graph::graph_clicked,
                 this, &ribbon::graph_clicked);
+        auto ptr_line = line_.get();
+        connect(graph_.get(), &draw_graph::graph_clicked,
+                [this, ptr_line] { reset_buttons(ptr_line); });
         block1_layout->addWidget(graph_.get());
     }
 
@@ -132,12 +156,16 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
     auto block2_layout = make_unique<QVBoxLayout> ();
     block2_layout->setContentsMargins (1, 1, 1, 1);
     block2_layout->setSpacing (1);
+
     {
-        line_ = make_unique<draw_line> (this);
         connect(line_.get(), &draw_line::graph_clicked,
                 this, &ribbon::graph_clicked);
+        auto ptr_graph = graph_.get();
+        connect(line_.get(), &draw_graph::graph_clicked,
+                [this, ptr_graph] { reset_buttons(ptr_graph); });
         block2_layout->addWidget(line_.get());
     }
+
 
     label = new QLabel ("绘制直线");
 
@@ -153,6 +181,7 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
 
     layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
     widget->setLayout (layout.release ());
+
 
     return widget;
 }
