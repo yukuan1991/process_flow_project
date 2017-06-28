@@ -26,6 +26,8 @@ private:
 private:
     canvas_view* create_canvas_body();
     void canvas_selection (QGraphicsItem* item);
+    void on_attribute_clicked ();
+    canvas_view* active_canvas_view();
 private:
     Ui::processflow_main *ui;
 };

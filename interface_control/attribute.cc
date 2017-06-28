@@ -30,6 +30,12 @@ attribute* attribute::make(nlohmann::json data, QWidget *parent)
     return ret;
 }
 
+attribute::attribute(QWidget *parent)
+    : QWidget(parent)
+{
+
+}
+
 void attribute::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Enter or event->key() == Qt::Key_Return)

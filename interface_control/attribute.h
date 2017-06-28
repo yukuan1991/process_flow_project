@@ -13,6 +13,7 @@ signals:
     void clear ();
 public:
     static attribute* make (nlohmann::json data, QWidget* parent = nullptr);
+    attribute(QWidget* parent = nullptr);
     const auto & changed_data () { return changed_data_; }
     void keyPressEvent(QKeyEvent *event);
 private:

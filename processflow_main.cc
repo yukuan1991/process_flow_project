@@ -3,6 +3,7 @@
 #include <QMdiArea>
 #include "interface_control/about_us_dlg.h"
 #include "item/item.h"
+#include <QMdiSubWindow>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -65,7 +66,7 @@ void processflow_main::canvas_selection(QGraphicsItem *the_item)
 {
     if (the_item == nullptr)
     {
-        ui->attribute->setWidget (nullptr);
+        ui->attribute_bar->setWidget (nullptr);
         return;
     }
 
@@ -82,19 +83,68 @@ void processflow_main::canvas_selection(QGraphicsItem *the_item)
         return;
     }
 
-    if (ui->attribute->isHidden ())
+    if (ui->attribute_bar->isHidden ())
     {
-        ui->attribute->show ();
+        ui->attribute_bar->show ();
     }
 
     ui->attribute_widget = attribute::make (data);
-//    connect (imp->attribute_widget.get (), &attribute::submit, this, &sheetflow_main::on_attribute_clicked);
-//    connect (imp->attribute_widget.get (), &attribute::clear, this, &sheetflow_main::on_attribute_clicked);
+    connect (ui->attribute_widget, &attribute::submit, this, &processflow_main::on_attribute_clicked);
+    connect (ui->attribute_widget, &attribute::clear, this, &processflow_main::on_attribute_clicked);
 
 //    connect (imp->attribute_widget.get (),&attribute::submit, [this]{ emit attribute_changed(); });
 //    connect (imp->attribute_widget.get (),&attribute::clear, [this]{ emit attribute_changed(); });
 
-    ui->attribute->setWidget (ui->attribute_widget);
+    ui->attribute_bar->setWidget (ui->attribute_widget);
+}
+
+void processflow_main::on_attribute_clicked()
+{
+    if (ui->attribute_widget == nullptr)
+    {
+        return;
+    }
+
+    auto & changed_data = ui->attribute_widget->changed_data ();
+
+    auto active_view = active_canvas_view ();
+    const auto items = active_view->scene ()->selectedItems ();
+
+    if (items.size () != 1)
+    {
+        return;
+    }
+
+    auto the_item = items [0];
+
+    auto casted_item = dynamic_cast<item*>(the_item);
+
+    if (casted_item == nullptr)
+    {
+        return;
+    }
+
+    for (auto & it : changed_data)
+    {
+        casted_item->set_attribute (it.first, it.second);
+    }
+
+    casted_item->update ();
+    ///发送信号，通知原材料和产成品
+    emit casted_item->attr_applied();
+}
+
+canvas_view *processflow_main::active_canvas_view()
+{
+    if(QMdiSubWindow *active_subwindow = ui->mdiarea->activeSubWindow())
+    {
+        canvas_view* canvas_ptr = dynamic_cast<canvas_view*> (active_subwindow->widget());
+        return canvas_ptr;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 void processflow_main::init_conn()
