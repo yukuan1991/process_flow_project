@@ -76,7 +76,7 @@ broken_line::broken_line(nlohmann::json data, QPointF pos, item *parent)
 
 bool broken_line::init() try
 {
-    set_item_type("连线2");
+    set_item_type("折线");
     const auto & data = dump ();
 
     auto points = data.find("points");

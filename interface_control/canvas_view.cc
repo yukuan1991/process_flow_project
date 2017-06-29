@@ -505,6 +505,29 @@ void canvas_view::delete_selected()
     }
 }
 
+std::string canvas_view::dump()
+{
+    return item::dump_scene (scene()).dump (4);
+}
+
+bool canvas_view::load(const std::string &data)
+{
+    auto content = nlohmann::json::parse (data);
+
+    for (auto & it : content)
+    {
+
+        auto the_item = item::make (it);
+
+        connect(the_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
+        connect(the_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
+
+        scene()->addItem (the_item.release ());
+
+    }
+    return true;
+}
+
 void canvas_view::print_render(QPrinter *printer)
 {
     QPainter painter(printer);

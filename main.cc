@@ -43,8 +43,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    file::write_buffer("123.txt", "xxxxxxxxxxxxxxxx");
-
     QFile qssfile("style.qss");
     qssfile.open(QFile::ReadOnly);
     QString qss;
