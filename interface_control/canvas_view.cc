@@ -505,6 +505,25 @@ void canvas_view::delete_selected()
     }
 }
 
+void canvas_view::print_render(QPrinter *printer)
+{
+    QPainter painter(printer);
+    scene()->render(&painter, QRectF(), scene_.get()->effective_rect ());
+}
+
+void canvas_view::scale_object(qreal factor)
+{
+    auto m = matrix ();
+    const auto scale_facter = m.m11();
+    const auto new_scale_factor = scale_facter * factor;
+
+    const auto final_scale_factor = new_scale_factor < 1 ? 1 : new_scale_factor;
+
+    auto m_after = QMatrix ();
+    m_after.scale(final_scale_factor, final_scale_factor);
+    setMatrix (m_after);
+}
+
 canvas_view::draw_type canvas_view::return_type()
 {
     return type_;

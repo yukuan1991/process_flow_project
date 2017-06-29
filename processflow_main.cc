@@ -4,6 +4,9 @@
 #include "interface_control/about_us_dlg.h"
 #include "item/item.h"
 #include <QMdiSubWindow>
+#include <QMessageBox>
+#include <QPrintDialog>
+#include <QFileDialog>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -30,6 +33,71 @@ void processflow_main::file_new()
     auto canvas = create_canvas_body();
 
     canvas->show();
+}
+
+void processflow_main::save_subwindow(QMdiSubWindow *sub_window)
+{
+    auto w = dynamic_cast<canvas_view*> (sub_window->widget()); assert(w); ///获取到当前要保存的窗口
+
+    QString path;
+    if (w->attached_file().isEmpty())
+    {
+        path = QFileDialog::getSaveFileName(this, "文件保存", ".", "Process Flow Sheet (*.pfs");
+        if (path.isEmpty())
+        {
+            return;
+        }
+    }
+    else
+    {
+        path = w->attached_file();
+    }
+
+    ///这里进行判断
+//    ::write_buffer (::utf_to_sys(path.toStdString()).data(), w->dump());
+    w->set_attached_file(std::move (path));
+    emit w->saved ();
+}
+
+void processflow_main::print_order()
+{
+    auto view = active_canvas_view();
+    if (view == nullptr)
+    {
+        QMessageBox::information(this, "打印", "没有选中的窗口");
+        return;
+    }
+
+    QPrinter printer;
+    printer.setOrientation(QPrinter::Landscape);
+    printer.setPageSize(QPrinter::A4);
+    QPrintDialog dlg (&printer);
+    if (QPrintDialog::Accepted == dlg.exec())
+    {
+        view->print_render(&printer);
+    }
+}
+
+void processflow_main::zoom_in_active()
+{
+    auto active_canvas = active_canvas_view();
+    if (active_canvas == nullptr)
+    {
+        return;
+    }
+
+    active_canvas->scale_object(1.1);
+}
+
+void processflow_main::zoom_out_active()
+{
+    auto active_canvas = active_canvas_view();
+    if (active_canvas == nullptr)
+    {
+        return;
+    }
+
+    active_canvas->scale_object(1 / 1.1);
 }
 
 void processflow_main::help_advice()
@@ -150,6 +218,12 @@ canvas_view *processflow_main::active_canvas_view()
 void processflow_main::init_conn()
 {
     connect (ui->process_ribbon, &ribbon::create_new, this, &processflow_main::file_new);
+    connect (ui->process_ribbon, &ribbon::print, this, &processflow_main::print_order);
     connect (ui->process_ribbon, &ribbon::quit, [this](){ QWidget::close();});
+
+    connect (ui->process_ribbon, &ribbon::zoom_in_active, this, &processflow_main::zoom_in_active);
+    connect (ui->process_ribbon, &ribbon::zoom_out_active, this, &processflow_main::zoom_out_active);
+
+
     connect (ui->process_ribbon, &ribbon::help, this, &processflow_main::help_advice);
 }

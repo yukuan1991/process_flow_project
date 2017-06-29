@@ -5,7 +5,7 @@
 
 
 class QMdiArea;
-
+class QMdiSubWindow;
 namespace Ui {
 class processflow_main;
 }
@@ -22,6 +22,12 @@ private:
     void init_conn();
 private:
     void file_new();
+    void file_save();
+    void save_subwindow (QMdiSubWindow * sub_window);
+    void print_order();
+private:
+    void zoom_in_active();
+    void zoom_out_active();
     void help_advice();
 private:
     canvas_view* create_canvas_body();

@@ -206,13 +206,13 @@ std::unique_ptr<QWidget> ribbon::ui_window()
 
     {
         auto btn = make_button (QPixmap ("png/放大.png").scaled (len, len), "放大");
-//        connect (btn.get (), &QToolButton::clicked, this, &ribbon::cut);
+        connect (btn.get (), &ribbon_tool::clicked, this, &ribbon::zoom_in_active);
         upper_layout->addWidget (btn.release ());
     }
 
     {
         auto btn = make_button (QPixmap ("png/缩小.png").scaled (len, len), "缩小");
-//        connect (btn.get (), &QToolButton::clicked, this, &ribbon::copy);
+        connect (btn.get (), &ribbon_tool::clicked, this, &ribbon::zoom_out_active);
         upper_layout->addWidget (btn.release ());
     }
 

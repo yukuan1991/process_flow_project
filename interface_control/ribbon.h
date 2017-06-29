@@ -26,6 +26,9 @@ signals:
     void save_as ();
     void quit ();
 
+    void zoom_in_active();
+    void zoom_out_active();
+
     void help();
 
     void graph_clicked(const QString &);
