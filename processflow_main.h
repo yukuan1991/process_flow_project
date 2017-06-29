@@ -20,7 +20,7 @@ public:
     ~processflow_main();
 //    QMdiArea* area();
 protected:
-    void closeEvent(QCloseEvent* event) override;
+//    void closeEvent(QCloseEvent* event) override;
     void on_view_closed();
 private:
     void init_conn();

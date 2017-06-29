@@ -38,6 +38,7 @@ public:
         }
         return ret;
     }
+
     virtual ~canvas_body ();
 protected:
     bool init();

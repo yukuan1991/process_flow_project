@@ -31,40 +31,45 @@ processflow_main::~processflow_main()
 //    return ui->mdiarea;
 //}
 
-void processflow_main::closeEvent(QCloseEvent *event)
-{
-    QWidget::closeEvent(event);
-    const auto list = ui->mdiarea->subWindowList();
+//void processflow_main::closeEvent(QCloseEvent *event)
+//{
+//    QWidget::closeEvent(event);
+//    const auto list = ui->mdiarea->subWindowList();
 
-    for (auto & sub : list)
-    {
-        auto view = dynamic_cast<canvas_view*> (sub->widget());
-        assert (view != nullptr);
-        if (!view->is_unsaved ())
-        {
-            continue;
-        }
+//    for (auto & sub : list)
+//    {
+//        auto view = dynamic_cast<canvas_view*> (sub->widget());
+//        assert (view != nullptr);
+//        if (!view->is_unsaved ())
+//        {
+//            continue;
+//        }
 
-        auto ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
-                                        "保存","忽略","取消");
+//        auto ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
+//                                        "保存","忽略","取消");
+//        constexpr auto save = 0;
+//        constexpr auto ignore = 1;
+//        constexpr auto cancel = 2;
 
-        if (ret == 0)
-        {
-            save_subwindow (sub);
-            ui->mdiarea->removeSubWindow(sub);
-        }
-        else if (ret == 1)
-        {
-            ui->mdiarea->removeSubWindow(sub);
-            continue;
-        }
-        else if (ret == 2)
-        {
-            event->ignore ();
-            return;
-        }
-    }
-}
+//        if (ret == save)
+//        {
+//            save_subwindow (sub);
+//            ui->mdiarea->removeSubWindow(sub);
+//            sub->deleteLater ();
+//        }
+//        else if (ret == ignore)
+//        {
+//            ui->mdiarea->removeSubWindow(sub);
+//            sub->deleteLater ();
+//            continue;
+//        }
+//        else if (ret == cancel)
+//        {
+//            event->ignore ();
+//            return;
+//        }
+//    }
+//}
 
 void processflow_main::on_view_closed()
 {

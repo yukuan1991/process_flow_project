@@ -3,6 +3,8 @@
 #include "json.hpp"
 #include "item/item.h"
 #include <QDebug>
+#include <QEvent>
+#include <QApplication>
 
 using nlohmann::json;
 
@@ -22,6 +24,8 @@ bool canvas_view::init()
         straight_line_item_ = nullptr;
         broken_lines_.clear();
     });
+
+    connect (this, &canvas_view::draw_finished, this, &canvas_view::restore_cursor_shape);
 
 //    connect (this, &canvas_view::scene_item_changed,
 //             [] { static auto i = 0; qDebug () << "scene_item_changed" << ++i; });
@@ -125,6 +129,23 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
         canvas_body::mouseReleaseEvent (event);
         break;
     }
+}
+
+void canvas_view::enterEvent(QEvent *event)
+{
+    canvas_body::enterEvent(event);
+    if(return_type() != canvas_view::draw_type::NONE)
+    {
+        QCursor cursor;
+        cursor.setShape(Qt::CrossCursor);
+        QApplication::setOverrideCursor(cursor);
+    }}
+
+void canvas_view::leaveEvent(QEvent *event)
+{
+    canvas_body::leaveEvent(event);
+
+    restore_cursor_shape();
 }
 
 //void canvas_view::closeEvent(QCloseEvent *event)
@@ -609,6 +630,13 @@ void canvas_view::set_type(canvas_view::draw_type t)
 
     type_ = t;
     emit type_changed(t);
+}
+
+void canvas_view::restore_cursor_shape()
+{
+    QCursor cursor;
+    cursor.setShape(Qt::ArrowCursor);
+    QApplication::setOverrideCursor(cursor);
 }
 
 canvas_view::~canvas_view()

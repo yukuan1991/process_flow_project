@@ -48,16 +48,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>process_ribbon</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>widget</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>mdiarea</zorder>
-  <zorder>mdiarea</zorder>
-  <zorder>attribute_bar</zorder>
  </widget>
  <customwidgets>
   <customwidget>

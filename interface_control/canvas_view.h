@@ -48,7 +48,7 @@ public:
     draw_type return_type ();
     void set_type_string (const QString & type);
     void set_type (draw_type t);
-
+    void restore_cursor_shape();
 public:
     template<typename ... ARGS>
     static unique_ptr<canvas_view> make (ARGS && ... args)
@@ -73,6 +73,9 @@ protected:
     void mousePressEvent (QMouseEvent* event) override;
     void mouseMoveEvent (QMouseEvent* event) override;
     void mouseReleaseEvent (QMouseEvent* event) override;
+
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
 
 //    void dragEnterEvent(QDragEnterEvent * event) override;
 //    void dragMoveEvent (QDragMoveEvent * event) override;
