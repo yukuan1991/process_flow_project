@@ -127,6 +127,21 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
+//void canvas_view::closeEvent(QCloseEvent *event)
+//{
+//    const bool unsaved = unsaved_content_;
+
+//    if(unsaved)
+//    {
+//        emit view_closed();
+//        event->ignore ();
+//    }
+//    else
+//    {
+//        canvas_body::closeEvent(event);
+//    }
+//}
+
 void canvas_view::machining_press_event(QMouseEvent *event)
 {
     begin_ = mapToScene (event->pos());

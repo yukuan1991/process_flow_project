@@ -26,15 +26,16 @@ public:
         BROKENLINE
     };
 signals:
-    void scale_changed (qreal);
     void type_changed (canvas_view::draw_type);
     void draw_finished ();
+
+    /// 画布上item有变化的信号
     void scene_item_changed();
     void view_closed();
+
+    ///画布内容已保存信号
     void saved ();
 public:
-//    void set_unsaved_content_state();
-//    void send_scene_changed_signals();
     std::string dump();
     QString attached_file () { return windowTitle (); }
     void set_attached_file (QString attached_file) { setWindowTitle(attached_file); }

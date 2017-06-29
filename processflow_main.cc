@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <base/io/file/file.hpp>
 #include <base/utils/charset.hpp>
+#include <QCloseEvent>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -25,9 +26,63 @@ processflow_main::~processflow_main()
     delete ui;
 }
 
-QMdiArea *processflow_main::area()
+//QMdiArea *processflow_main::area()
+//{
+//    return ui->mdiarea;
+//}
+
+void processflow_main::closeEvent(QCloseEvent *event)
 {
-    return ui->mdiarea;
+    QWidget::closeEvent(event);
+    const auto list = ui->mdiarea->subWindowList();
+
+    for (auto & sub : list)
+    {
+        auto view = dynamic_cast<canvas_view*> (sub->widget());
+        assert (view != nullptr);
+        if (!view->is_unsaved ())
+        {
+            continue;
+        }
+
+        auto ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
+                                        "保存","忽略","取消");
+
+        if (ret == 0)
+        {
+            save_subwindow (sub);
+            ui->mdiarea->removeSubWindow(sub);
+        }
+        else if (ret == 1)
+        {
+            ui->mdiarea->removeSubWindow(sub);
+            continue;
+        }
+        else if (ret == 2)
+        {
+            event->ignore ();
+            return;
+        }
+    }
+}
+
+void processflow_main::on_view_closed()
+{
+    int ret = 0;
+    ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
+                          "保存","忽略","取消");
+    if (ret == 2)
+    {
+        return;
+    }
+    auto active_window = ui->mdiarea->activeSubWindow();
+
+    if (ret == 0)
+    {
+        file_save ();
+    }
+
+    active_window->deleteLater();
 }
 
 void processflow_main::file_new()
@@ -174,8 +229,8 @@ canvas_view *processflow_main::create_canvas_body()
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
     connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
 
-//    connect (ptr_canvas, &canvas_view::view_closed, this, &sheetflow_main::on_view_closed, Qt::QueuedConnection);
-//    connect (this, &sheetflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
+//    connect (ptr_canvas, &canvas_view::view_closed, this, &processflow_main::on_view_closed, Qt::QueuedConnection);
+    connect (this, &processflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
 
     ///确保当前被按下的图形按钮，在新建画布的时候有效
     ptr_canvas->set_type_string(ui->process_ribbon->status());
@@ -215,8 +270,8 @@ void processflow_main::canvas_selection(QGraphicsItem *the_item)
     connect (ui->attribute_widget, &attribute::submit, this, &processflow_main::on_attribute_clicked);
     connect (ui->attribute_widget, &attribute::clear, this, &processflow_main::on_attribute_clicked);
 
-//    connect (imp->attribute_widget.get (),&attribute::submit, [this]{ emit attribute_changed(); });
-//    connect (imp->attribute_widget.get (),&attribute::clear, [this]{ emit attribute_changed(); });
+    connect (ui->attribute_widget,&attribute::submit, [this]{ emit attribute_changed(); });
+    connect (ui->attribute_widget,&attribute::clear, [this]{ emit attribute_changed(); });
 
     ui->attribute_bar->setWidget (ui->attribute_widget);
 }

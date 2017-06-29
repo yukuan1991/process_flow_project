@@ -13,11 +13,15 @@ class processflow_main;
 class processflow_main final : public QWidget
 {
     Q_OBJECT
-
+signals:
+    void attribute_changed();
 public:
     explicit processflow_main(QWidget *parent = 0);
     ~processflow_main();
-    QMdiArea* area();
+//    QMdiArea* area();
+protected:
+    void closeEvent(QCloseEvent* event) override;
+    void on_view_closed();
 private:
     void init_conn();
 private:
