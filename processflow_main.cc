@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include <QPrintDialog>
 #include <QFileDialog>
+#include <base/io/file/file.hpp>
+#include <base/utils/charset.hpp>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -54,7 +56,7 @@ void processflow_main::save_subwindow(QMdiSubWindow *sub_window)
     }
 
     ///这里进行判断
-//    ::write_buffer (::utf_to_sys(path.toStdString()).data(), w->dump());
+    file::write_buffer (::utf_to_sys(path.toStdString()).data(), w->dump());
     w->set_attached_file(std::move (path));
     emit w->saved ();
 }

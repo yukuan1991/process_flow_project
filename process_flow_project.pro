@@ -55,7 +55,6 @@ HEADERS  += \
     interface_control/about_us_dlg.h \
     item/raw_material.h \
     item/item.h \
-    utility/interface.hpp \
     item/machining.h \
     item/checkout.h \
     item/finished_product.h \
@@ -71,3 +70,6 @@ FORMS    += \
     processflow_main.ui
 
 DISTFILES +=
+
+LIBS += -lboost_locale
+LIBS += -liconv
