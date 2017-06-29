@@ -49,6 +49,8 @@ draw_graph::draw_graph(QWidget *parent)
     connect(button_checkout, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
     connect(button_finished_product, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
 
+    connect(this, &draw_graph::graph_clicked, [this] (const QString & s) { status_ = s; });
+
     QHBoxLayout* layout = new QHBoxLayout;
 
     layout->setContentsMargins(1, 1, 1, 1);

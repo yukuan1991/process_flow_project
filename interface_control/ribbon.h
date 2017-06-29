@@ -35,6 +35,8 @@ signals:
 public:
     ribbon (QWidget * parent = nullptr);
 
+    ///绘图中的buttons的状态
+    QString status();
     ///将绘图中的buttons复位
     void reset_status();
     ///将指定的draw类中的buttons复位

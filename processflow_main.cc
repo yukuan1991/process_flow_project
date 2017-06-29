@@ -177,7 +177,8 @@ canvas_view *processflow_main::create_canvas_body()
 //    connect (ptr_canvas, &canvas_view::view_closed, this, &sheetflow_main::on_view_closed, Qt::QueuedConnection);
 //    connect (this, &sheetflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
 
-//    ptr_canvas->set_type_string(imp->draw_widget->status());
+    ///确保当前被按下的图形按钮，在新建画布的时候有效
+    ptr_canvas->set_type_string(ui->process_ribbon->status());
 
     ui->mdiarea->addSubWindow(canvas.release ());
 

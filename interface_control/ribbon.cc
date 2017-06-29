@@ -29,6 +29,21 @@ ribbon::ribbon(QWidget *parent)
     setup_ui();
 }
 
+QString ribbon::status()
+{
+    if(!graph_->status().isEmpty())
+    {
+        return graph_->status();
+    }
+
+    if(!line_->status().isEmpty())
+    {
+        return line_->status();
+    }
+
+    return "";
+}
+
 void ribbon::reset_status()
 {
     graph_->reset_status();
