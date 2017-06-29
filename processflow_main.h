@@ -22,8 +22,10 @@ private:
     void init_conn();
 private:
     void file_new();
+    void file_open();
     void file_save();
     void save_subwindow (QMdiSubWindow * sub_window);
+    void file_save_as();
     void print_order();
 private:
     void zoom_in_active();

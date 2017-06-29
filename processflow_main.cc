@@ -7,6 +7,8 @@
 #include <QMessageBox>
 #include <QPrintDialog>
 #include <QFileDialog>
+#include <base/io/file/file.hpp>
+#include <base/utils/charset.hpp>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -35,6 +37,39 @@ void processflow_main::file_new()
     canvas->show();
 }
 
+void processflow_main::file_open()
+{
+    auto file_name = QFileDialog::getOpenFileName(this, "打开文件", ".", "Images (*.pfs)");
+    if (file_name.isEmpty())
+    {
+        return;
+    }
+
+    auto file_content = file::read_all(::utf_to_sys(file_name.toStdString()).data());
+    if (!file_content)
+    {
+        QMessageBox::information(this, "打开", "打开文件失败，请检查文件是否存在");
+        return;
+    }
+
+    auto canvas = create_canvas_body();
+    if (!canvas->load (*file_content))
+    {
+        QMessageBox::information(this, "打开", "打开文件失败，文件已经损坏");
+        return;
+    }
+
+    canvas->set_attached_file(std::move (file_name));
+    canvas->ensureVisible(0, 0, 300,200 ); //打开文件时确保显示画布的区域在左上角
+}
+
+void processflow_main::file_save()
+{
+    auto sub_window = ui->mdiarea->activeSubWindow();
+    assert (sub_window);
+    save_subwindow (sub_window);
+}
+
 void processflow_main::save_subwindow(QMdiSubWindow *sub_window)
 {
     auto w = dynamic_cast<canvas_view*> (sub_window->widget()); assert(w); ///获取到当前要保存的窗口
@@ -42,7 +77,7 @@ void processflow_main::save_subwindow(QMdiSubWindow *sub_window)
     QString path;
     if (w->attached_file().isEmpty())
     {
-        path = QFileDialog::getSaveFileName(this, "文件保存", ".", "Process Flow Sheet (*.pfs");
+        path = QFileDialog::getSaveFileName(this, "文件保存", ".", "Process Flow Sheet (*.pfs)");
         if (path.isEmpty())
         {
             return;
@@ -54,9 +89,28 @@ void processflow_main::save_subwindow(QMdiSubWindow *sub_window)
     }
 
     ///这里进行判断
-//    ::write_buffer (::utf_to_sys(path.toStdString()).data(), w->dump());
+    file::write_buffer (::utf_to_sys(path.toStdString()).data(), w->dump());
     w->set_attached_file(std::move (path));
     emit w->saved ();
+}
+
+void processflow_main::file_save_as()
+{
+    auto sub_window = ui->mdiarea->activeSubWindow();
+    assert (sub_window);
+
+    auto w = dynamic_cast<canvas_view*> (sub_window->widget()); assert(w);
+
+    auto path = QFileDialog::getSaveFileName(this, "另存为", ".", "Progress Flow Sheet (*.pfs)");
+
+    if (path.isEmpty())
+    {
+        return;
+    }
+
+    file::write_buffer (::utf_to_sys(path.toStdString()).data(), w->dump());
+    w->set_attached_file(std::move (path));
+    emit w->saved();
 }
 
 void processflow_main::print_order()
@@ -218,6 +272,9 @@ canvas_view *processflow_main::active_canvas_view()
 void processflow_main::init_conn()
 {
     connect (ui->process_ribbon, &ribbon::create_new, this, &processflow_main::file_new);
+    connect (ui->process_ribbon, &ribbon::open, this, &processflow_main::file_open);
+    connect (ui->process_ribbon, &ribbon::save, this, &processflow_main::file_save);
+    connect (ui->process_ribbon, &ribbon::save_as, this, &processflow_main::file_save_as);
     connect (ui->process_ribbon, &ribbon::print, this, &processflow_main::print_order);
     connect (ui->process_ribbon, &ribbon::quit, [this](){ QWidget::close();});
 

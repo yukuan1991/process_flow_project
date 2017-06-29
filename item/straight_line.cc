@@ -122,7 +122,7 @@ straight_line::straight_line(nlohmann::json data, QPointF pos, item *parent)
 
 bool straight_line::init() try
 {
-    set_item_type("连线1");
+    set_item_type("直线");
     const auto & data = dump ();
     auto points = data.find("points");
     if (points == end (data))

@@ -14,6 +14,7 @@
 #include <QMdiArea>
 #include <QWidget>
 #include <QMdiSubWindow>
+#include <base/io/file/file.hpp>
 
 
 //void set_style ()
