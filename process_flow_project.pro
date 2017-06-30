@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG -= c++11
 QMAKE_CXXFLAGS += -std=c++1z
 
+RC_ICONS = png/myappico.ico
+
 TARGET = process_flow_project
 TEMPLATE = app
 
@@ -51,7 +53,6 @@ HEADERS  += \
     interface_control/canvas_scene.h \
     interface_control/canvas_body.h \
     interface_control/canvas_view.h \
-    interface_control/ribbon.h \
     interface_control/about_us_dlg.h \
     item/raw_material.h \
     item/item.h \
@@ -73,3 +74,5 @@ DISTFILES +=
 
 LIBS += -lboost_locale
 LIBS += -liconv
+LIBS += -lboost_filesystem
+LIBS += -lboost_system
