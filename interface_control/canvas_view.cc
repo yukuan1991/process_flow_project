@@ -186,7 +186,7 @@ void canvas_view::machining_press_event(QMouseEvent *event)
     const auto rect_center = machining->boundingRect().center();
     auto center_pos = begin_ - rect_center;
     machining->setPos(center_pos);
-    machining->setSelected(true);
+//    machining->setSelected(true);
     scene()->addItem(machining.get());
     connect(machining.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
     connect(machining.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
@@ -224,7 +224,7 @@ void canvas_view::checkout_press_event(QMouseEvent *event)
     const auto rect_center = checkout->boundingRect().center();
     auto center_pos = begin_ - rect_center;
     checkout->setPos(center_pos);
-    checkout->setSelected(true);
+//    checkout->setSelected(true);
     scene()->addItem(checkout.get());
     connect(checkout.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
     connect(checkout.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
