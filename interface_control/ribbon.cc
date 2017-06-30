@@ -84,7 +84,7 @@ void ribbon::setup_ui()
 {
     setup_menu();
 
-    this->addTab (ui_edit ().release (), "编辑");
+    this->addTab (ui_draw ().release (), "绘图");
     this->addTab (ui_window ().release (), "窗口");
     this->addTab (ui_help ().release (), "帮助");
 
@@ -134,7 +134,7 @@ void ribbon::setup_menu()
     menu->setContentsMargins(10, 0, 0, 0);
 }
 
-std::unique_ptr<QWidget> ribbon::ui_edit()
+std::unique_ptr<QWidget> ribbon::ui_draw()
 {
     auto widget = make_unique<QWidget> ();
     auto layout = make_unique<QHBoxLayout> ();
@@ -182,7 +182,7 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
     }
 
 
-    label = new QLabel ("绘制直线");
+    label = new QLabel ("绘制连线");
 
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block2_layout->addWidget (label);

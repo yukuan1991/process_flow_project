@@ -45,7 +45,7 @@ private:
     static std::unique_ptr<QToolButton> make_button (const QPixmap & icon, const QString & text);
     void setup_ui ();
     void setup_menu ();
-    std::unique_ptr<QWidget> ui_edit ();
+    std::unique_ptr<QWidget> ui_draw ();
     std::unique_ptr<QWidget> ui_window ();
     std::unique_ptr<QWidget> ui_help ();
     std::unique_ptr<draw_graph> graph_;
