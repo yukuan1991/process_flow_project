@@ -11,12 +11,13 @@
 #include <QTabBar>
 #include <QWidgetAction>
 #include <base/io/file/file.hpp>
+#include <QDebug>
 
 using namespace std;
 using std::unique_ptr;
 
 ribbon::ribbon(QWidget *parent)
-    : QTabWidget(parent)
+    : QTabWidget(parent), button_enabled_(false)
 {
     this->setTabBar (new ribbon_bar (this));
 
@@ -26,6 +27,7 @@ ribbon::ribbon(QWidget *parent)
     graph_ = make_unique<draw_graph> (this);
     line_ = make_unique<draw_line> (this);
 
+    connect(this, &ribbon::set_enabled, [this] (bool b){ qDebug() << b; });
     setup_ui();
 }
 
@@ -85,6 +87,7 @@ void ribbon::setup_ui()
     setup_menu();
 
     this->addTab (ui_draw ().release (), "绘图");
+    this->addTab (ui_edit ().release (), "编辑");
     this->addTab (ui_window ().release (), "窗口");
     this->addTab (ui_help ().release (), "帮助");
 
@@ -117,14 +120,17 @@ void ribbon::setup_menu()
 
     action =  make_action (QPixmap ("png/打印.png"), "打印");
     connect (action.get (), &QAction::triggered, this, &ribbon::print);
+    connect (this, &ribbon::set_enabled, action.get(), &QAction::setEnabled);
     menu->addAction (action.release ());
 
     action =  make_action (QPixmap ("png/保存.png"), "保存");
     connect (action.get (), &QAction::triggered, this, &ribbon::save);
+    connect (this, &ribbon::set_enabled, action.get(), &QAction::setEnabled);
     menu->addAction (action.release ());
 
     action =  make_action (QPixmap ("png/另存为.png"), "另存为");
     connect (action.get (), &QAction::triggered, this, &ribbon::save_as);
+    connect (this, &ribbon::set_enabled, action.get(), &QAction::setEnabled);
     menu->addAction (action.release ());
 
     action =  make_action (QPixmap ("png/退出.png"), "退出");
@@ -132,6 +138,57 @@ void ribbon::setup_menu()
     menu->addAction (action.release ());
 
     menu->setContentsMargins(10, 0, 0, 0);
+}
+
+std::unique_ptr<QWidget> ribbon::ui_edit()
+{
+    auto widget = make_unique<QWidget> ();
+    auto layout = make_unique<QHBoxLayout> ();
+
+    layout->setContentsMargins (1, 1, 1, 1);
+    layout->setSpacing (1);
+
+    auto block1_layout = make_unique<QVBoxLayout> ();
+    block1_layout->setContentsMargins (1, 1, 1, 1);
+    block1_layout->setSpacing (1);
+
+    auto upper_layout = make_unique<QHBoxLayout> ();
+    upper_layout->setContentsMargins(10, 0, 10, 0);
+    upper_layout->setSpacing (10);
+
+    constexpr auto len = 39;
+
+    {
+        auto btn = make_button (QPixmap ("png/删除.png").scaled (len, len), "删除");
+        btn->setToolTip("Delete");
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
+        connect (btn.get (), &ribbon_tool::clicked, this, &ribbon::delete_selected);
+        upper_layout->addWidget (btn.release ());
+    }
+
+    {
+        auto btn = make_button (QPixmap ("png/全选.png").scaled (len, len), "全选");
+        btn->setToolTip("Ctrl + A");
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
+        connect (btn.get (), &ribbon_tool::clicked, this, &ribbon::selected_all);
+        upper_layout->addWidget (btn.release ());
+    }
+
+    block1_layout->addLayout (upper_layout.release ());
+    auto label = new QLabel ("第一类");
+    label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
+    block1_layout->addWidget (label);
+    layout->addLayout (block1_layout.release (), 0);
+
+    auto line = new QFrame(widget.get ());
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    layout->addWidget (line);
+
+    layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+    widget->setLayout (layout.release ());
+
+    return widget;
 }
 
 std::unique_ptr<QWidget> ribbon::ui_draw()
@@ -150,6 +207,7 @@ std::unique_ptr<QWidget> ribbon::ui_draw()
     {
         connect(graph_.get(), &draw_graph::graph_clicked,
                 this, &ribbon::graph_clicked);
+        connect(this, &ribbon::set_enabled, graph_.get(), &draw_graph::set_enabled);
         auto ptr_line = line_.get();
         connect(graph_.get(), &draw_graph::graph_clicked,
                 [this, ptr_line] { reset_buttons(ptr_line); });
@@ -175,6 +233,7 @@ std::unique_ptr<QWidget> ribbon::ui_draw()
     {
         connect(line_.get(), &draw_line::graph_clicked,
                 this, &ribbon::graph_clicked);
+        connect(this, &ribbon::set_enabled, line_.get(), &draw_line::set_enabled);
         auto ptr_graph = graph_.get();
         connect(line_.get(), &draw_graph::graph_clicked,
                 [this, ptr_graph] { reset_buttons(ptr_graph); });
@@ -221,12 +280,14 @@ std::unique_ptr<QWidget> ribbon::ui_window()
 
     {
         auto btn = make_button (QPixmap ("png/放大.png").scaled (len, len), "放大");
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
         connect (btn.get (), &ribbon_tool::clicked, this, &ribbon::zoom_in_active);
         upper_layout->addWidget (btn.release ());
     }
 
     {
         auto btn = make_button (QPixmap ("png/缩小.png").scaled (len, len), "缩小");
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
         connect (btn.get (), &ribbon_tool::clicked, this, &ribbon::zoom_out_active);
         upper_layout->addWidget (btn.release ());
     }

@@ -7,7 +7,7 @@ draw_line::draw_line(QWidget *parent)
     auto button_straight_line = new ribbon_tool(this);
     auto button_broken_line = new ribbon_tool(this);
 
-    const QSize size = QSize(30, 18);
+    const QSize size = QSize(16, 16);
     button_straight_line->setIcon(QIcon("png/直线.png"));
     button_straight_line->setIconSize(size);
     button_broken_line->setIcon(QIcon("png/折线.png"));
@@ -29,6 +29,9 @@ draw_line::draw_line(QWidget *parent)
 
     connect(button_straight_line, &ribbon_tool::clicked, this, &draw_line::on_button_pressed);
     connect(button_broken_line, &ribbon_tool::clicked, this, &draw_line::on_button_pressed);
+
+    connect(this, &draw_line::set_enabled, button_straight_line, &ribbon_tool::setEnabled);
+    connect(this, &draw_line::set_enabled, button_broken_line, &ribbon_tool::setEnabled);
 
     QHBoxLayout* layout = new QHBoxLayout;
 

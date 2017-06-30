@@ -18,12 +18,12 @@ signals:
 public:
     explicit processflow_main(QWidget *parent = 0);
     ~processflow_main();
-//    QMdiArea* area();
 protected:
 //    void closeEvent(QCloseEvent* event) override;
     void on_view_closed();
 private:
     void init_conn();
+    void set_button_enabled();
 private:
     void file_new();
     void file_open();

@@ -50,6 +50,9 @@ public:
     void set_type (draw_type t);
     void restore_cursor_shape();
 public:
+    void select_allitems();
+    void delete_selected ();
+public:
     template<typename ... ARGS>
     static unique_ptr<canvas_view> make (ARGS && ... args)
     {
@@ -103,10 +106,7 @@ private:
     void brokenline_press_event (QMouseEvent* event);
     void brokenline_move_event (QMouseEvent* event);
     void brokenline_release_event (QMouseEvent* event);
-private:
-    void select_allitems();
-    void delete_selected ();
-    void drop_action (QDropEvent* event);
+
 
 private:
     canvas_view::draw_type type_ = canvas_view::draw_type::NONE;

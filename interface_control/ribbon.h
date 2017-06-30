@@ -26,12 +26,17 @@ signals:
     void save_as ();
     void quit ();
 
+    void delete_selected();
+    void selected_all();
+
     void zoom_in_active();
     void zoom_out_active();
 
     void help();
 
     void graph_clicked(const QString &);
+
+    void set_enabled(bool);
 public:
     ribbon (QWidget * parent = nullptr);
 
@@ -40,16 +45,18 @@ public:
     ///将绘图中的buttons复位
     void reset_status();
     ///将指定的draw类中的buttons复位
-    void reset_buttons(draw*);
+    void reset_buttons(draw*);    
 private:
     static std::unique_ptr<QToolButton> make_button (const QPixmap & icon, const QString & text);
     void setup_ui ();
     void setup_menu ();
+    std::unique_ptr<QWidget> ui_edit ();
     std::unique_ptr<QWidget> ui_draw ();
     std::unique_ptr<QWidget> ui_window ();
     std::unique_ptr<QWidget> ui_help ();
     std::unique_ptr<draw_graph> graph_;
     std::unique_ptr<draw_line> line_;
+    bool button_enabled_;
 
 };
 

@@ -16,6 +16,7 @@ processflow_main::processflow_main(QWidget *parent) :
     ui(new Ui::processflow_main)
 {
     ui->setupUi(this);
+    set_button_enabled();
     ui->mdiarea->setViewMode(QMdiArea::TabbedView);
     ui->mdiarea->setBackground(QBrush(QColor("#D7D7D7")));
     setWindowIcon(QIcon("png/工艺流程图标.png"));
@@ -26,11 +27,6 @@ processflow_main::~processflow_main()
 {
     delete ui;
 }
-
-//QMdiArea *processflow_main::area()
-//{
-//    return ui->mdiarea;
-//}
 
 //void processflow_main::closeEvent(QCloseEvent *event)
 //{
@@ -234,6 +230,9 @@ canvas_view *processflow_main::create_canvas_body()
     connect (ui->process_ribbon, &ribbon::graph_clicked, ptr_canvas, &canvas_view::set_type_string);
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
     connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
+    connect (ui->process_ribbon, &ribbon::delete_selected, ptr_canvas, &canvas_view::delete_selected);
+    connect (ui->process_ribbon, &ribbon::selected_all, ptr_canvas, &canvas_view::select_allitems);
+
 
 //    connect (ptr_canvas, &canvas_view::view_closed, this, &processflow_main::on_view_closed, Qt::QueuedConnection);
     connect (this, &processflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
@@ -343,6 +342,14 @@ void processflow_main::init_conn()
     connect (ui->process_ribbon, &ribbon::zoom_in_active, this, &processflow_main::zoom_in_active);
     connect (ui->process_ribbon, &ribbon::zoom_out_active, this, &processflow_main::zoom_out_active);
 
-
     connect (ui->process_ribbon, &ribbon::help, this, &processflow_main::help_advice);
+
+    connect(ui->mdiarea, &QMdiArea::subWindowActivated, this, &processflow_main::set_button_enabled);
+
+}
+
+void processflow_main::set_button_enabled()
+{
+    const bool has_canvas_view = (active_canvas_view() != nullptr);
+    ui->process_ribbon->set_enabled(has_canvas_view);
 }

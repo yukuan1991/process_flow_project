@@ -7,6 +7,7 @@ class draw : public QFrame
     Q_OBJECT
 signals:
     void graph_clicked (const QString&);
+    void set_enabled(bool);
 public:
     draw(QWidget *parent = 0);
     virtual ~draw() {}

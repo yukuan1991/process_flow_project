@@ -17,6 +17,7 @@ bool canvas_view::init()
     setViewportUpdateMode(FullViewportUpdate);
     setMouseTracking(true);
     setRenderHints (QPainter::Antialiasing);
+    setDragMode(RubberBandDrag);
 
     connect (this, &canvas_view::type_changed, [this] (auto && )
     {

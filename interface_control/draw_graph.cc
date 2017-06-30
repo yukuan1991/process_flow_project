@@ -14,7 +14,7 @@ draw_graph::draw_graph(QWidget *parent)
     auto button_finished_product = new ribbon_tool(this);
 
 
-    const QSize size = QSize(30, 18);
+    const QSize size = QSize(16, 16);
     button_raw_material->setIcon(QIcon("png/原材料.png"));
     button_raw_material->setIconSize(size);
     button_machining->setIcon(QIcon("png/加工.png"));
@@ -50,6 +50,11 @@ draw_graph::draw_graph(QWidget *parent)
     connect(button_machining, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
     connect(button_checkout, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
     connect(button_finished_product, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
+
+    connect(this, &draw_graph::set_enabled, button_raw_material, &ribbon_tool::setEnabled);
+    connect(this, &draw_graph::set_enabled, button_machining, &ribbon_tool::setEnabled);
+    connect(this, &draw_graph::set_enabled, button_checkout, &ribbon_tool::setEnabled);
+    connect(this, &draw_graph::set_enabled, button_finished_product, &ribbon_tool::setEnabled);
 
     connect(this, &draw_graph::graph_clicked, [this] (const QString & s) { status_ = s; });
 
