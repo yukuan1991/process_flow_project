@@ -9,6 +9,8 @@
 #include "item/broken_line.h"
 #include "item/straight_line.h"
 #include <QGraphicsScene>
+#include <QCursor>
+#include <QApplication>
 
 using std::find_if;
 using std::string;
@@ -78,6 +80,31 @@ catch (const std::exception &)
     return {};
 }
 
+//bool sceneEvent(QEvent *event)
+//{
+//    if(event->type() == )
+//    QCursor cursor;
+//    cursor.setShape(Qt::CrossCursor);
+//    QApplication::setOverrideCursor(cursor);
+//}
+
+
+void item::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    QGraphicsObject::hoverEnterEvent(event);
+    QCursor cursor;
+    cursor.setShape(Qt::SizeAllCursor);
+    QApplication::setOverrideCursor(cursor);
+}
+
+void item::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    QGraphicsObject::hoverLeaveEvent(event);
+    QCursor cursor;
+    cursor.setShape(Qt::ArrowCursor);
+    QApplication::setOverrideCursor(cursor);
+}
+
 QPolygonF item::get_line_polygon(QLineF l, qreal width)
 {
 
@@ -112,6 +139,7 @@ item::item(nlohmann::json data, QPointF pos, item *parent)
     :QGraphicsObject (parent)
 {
     setFlags (ItemIsSelectable | ItemIsMovable);
+    setAcceptHoverEvents(true);
     item_info_ = std::move(data);
     setPos(pos);
 }

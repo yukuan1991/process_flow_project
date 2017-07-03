@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QGraphicsTextItem>
 #include <memory>
 #include <item/item.h>
@@ -15,6 +15,7 @@ protected:
     bool init ();
     void paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     QRectF boundingRect() const override;
+    QVariant itemChange (GraphicsItemChange change, const QVariant &value) override;
 private:
     void up_date();
 private:

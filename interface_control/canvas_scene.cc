@@ -3,7 +3,7 @@
 
 bool canvas_scene::init()
 {
-    connect (this, &canvas_scene::selectionChanged, [this] { nitification_canvas_select(); });
+    connect (this, &canvas_scene::selectionChanged, [this] { notification_canvas_select(); });
     setBackgroundBrush(QColor (230, 230, 230));
     return true;
 }
@@ -33,7 +33,7 @@ canvas_scene::~canvas_scene()
 
 }
 
-void canvas_scene::nitification_canvas_select()
+void canvas_scene::notification_canvas_select()
 {
     if(selectedItems().size() == 1)
     {

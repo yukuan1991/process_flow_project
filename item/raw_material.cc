@@ -2,6 +2,11 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QDebug>
+#include <algorithm>
+
+using namespace std;
+
 
 std::unique_ptr<raw_material> raw_material::make(QPointF point)
 {
@@ -93,6 +98,31 @@ QRectF raw_material::boundingRect() const
 {
     return bounding_rect_;
 }
+
+QVariant raw_material::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+    auto var = item::itemChange(change, value);
+    if (change == ItemSelectedHasChanged)
+    {
+        const auto selected = value.toBool();
+        if (selected == false)
+        {
+            const auto name_is_space = all_of (begin (name_), end (name_),
+                    [] (auto && it ) { return it == ' ' or it == '\t'; });
+
+            const auto spec_is_space = all_of (begin (specification_), end (specification_),
+                    [] (auto && it ) { return it == ' ' or it == '\t'; });
+
+            if (name_is_space and spec_is_space)
+            {
+                deleteLater();
+            }
+        }
+    }
+
+    return var;
+}
+
 
 void raw_material::up_date()
 {

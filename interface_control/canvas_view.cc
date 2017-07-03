@@ -75,9 +75,11 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
         break;
     case canvas_view::draw_type::STRAIGHTLINE:
         straightline_press_event(event);
+        canvas_body::mousePressEvent(event);
         break;
     case canvas_view::draw_type::BROKENLINE:
         brokenline_press_event(event);
+        canvas_body::mousePressEvent(event);
         break;
     default:
         canvas_body::mousePressEvent (event);
@@ -107,17 +109,19 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
     {
     case canvas_view::draw_type::FINISHEDPRODUCTED:
         finished_product_release_event(event);
-        canvas_body::mouseReleaseEvent (event);
+//        canvas_body::mouseReleaseEvent (event);
         break;
     case canvas_view::draw_type::RAWMATERIAL:
         rawmaterial_release_event(event);
-        canvas_body::mouseReleaseEvent (event);
+//        canvas_body::mouseReleaseEvent (event);
         break;
     case canvas_view::draw_type::STRAIGHTLINE:
         straightline_release_event(event);
+//        canvas_body::mouseReleaseEvent (event);
         break;
-    case canvas_view::draw_type::BROKENLINE:
+    case canvas_view::draw_type::BROKENLINE:  
         brokenline_release_event(event);
+//        canvas_body::mouseReleaseEvent (event);
         break;
     case canvas_view::draw_type::MACHINING:
         machining_release_event(event);
@@ -299,7 +303,7 @@ void canvas_view::rawmaterial_press_event(QMouseEvent *event)
     const auto rect_center = rawmaterial->boundingRect().center();
     auto center_pos = begin_ - rect_center;
     rawmaterial->setPos(center_pos);
-    rawmaterial->setSelected(true);
+//    rawmaterial->setSelected(true);
     scene()->addItem(rawmaterial.get());
     connect(rawmaterial.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
     connect(rawmaterial.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
@@ -404,7 +408,7 @@ void canvas_view::straightline_release_event(QMouseEvent *event)
 
     auto straight = item::make(std::move (data));
 //    auto straight = straight_line::make(begin_, pos);
-
+    straight->setSelected(true);
     scene()->addItem(straight.get());
 
     connect(straight.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
@@ -471,6 +475,8 @@ void canvas_view::brokenline_press_event(QMouseEvent *event)
         };
 
         auto broke = item::make (std::move (data));
+
+        broke->setSelected(true);
 
         scene()->addItem(broke.get());
 

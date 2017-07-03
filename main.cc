@@ -38,6 +38,7 @@ void set_style ()
     qApp->setStyle (QStyleFactory::create ("fusion"));
 
     qApp->setStyleSheet (QString::fromStdString (qss));
+    qApp->setFont (QFont ("宋体", 11));
 }
 
 int main(int argc, char *argv[])

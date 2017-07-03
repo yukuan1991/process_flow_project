@@ -110,30 +110,30 @@ void ribbon::setup_menu()
     file->setMenu (menu);
     file->setObjectName("ribbon_button_file");
 
-    auto action =  make_action (QPixmap ("png/新建.png"), "新建");
+    auto action =  make_action (QPixmap ("png/新建.png"), "  新建");
     connect (action.get (), &QAction::triggered, this, &ribbon::create_new);
     menu->addAction (action.release ());
 
-    action =  make_action (QPixmap ("png/打开.png"), "打开");
+    action =  make_action (QPixmap ("png/打开.png"), "  打开");
     connect (action.get (), &QAction::triggered, this, &ribbon::open);
     menu->addAction (action.release ());
 
-    action =  make_action (QPixmap ("png/打印.png"), "打印");
+    action =  make_action (QPixmap ("png/打印.png"), "  打印");
     connect (action.get (), &QAction::triggered, this, &ribbon::print);
     connect (this, &ribbon::set_enabled, action.get(), &QAction::setEnabled);
     menu->addAction (action.release ());
 
-    action =  make_action (QPixmap ("png/保存.png"), "保存");
+    action =  make_action (QPixmap ("png/保存.png"), "  保存");
     connect (action.get (), &QAction::triggered, this, &ribbon::save);
     connect (this, &ribbon::set_enabled, action.get(), &QAction::setEnabled);
     menu->addAction (action.release ());
 
-    action =  make_action (QPixmap ("png/另存为.png"), "另存为");
+    action =  make_action (QPixmap ("png/另存为.png"), "  另存为");
     connect (action.get (), &QAction::triggered, this, &ribbon::save_as);
     connect (this, &ribbon::set_enabled, action.get(), &QAction::setEnabled);
     menu->addAction (action.release ());
 
-    action =  make_action (QPixmap ("png/退出.png"), "退出");
+    action =  make_action (QPixmap ("png/退出.png"), "  退出");
     connect (action.get (), &QAction::triggered, this, &ribbon::quit);
     menu->addAction (action.release ());
 

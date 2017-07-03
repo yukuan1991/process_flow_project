@@ -24,7 +24,14 @@ void straight_line::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->setPen(the_pen);
 
     painter->drawLine(QPointF (0, 0), end_);
+//    painter->drawPath(shape());
+//    painter->drawRect(boundingRect());
 
+}
+
+QRectF straight_line::boundingRect() const
+{
+    return QRectF(0, -5, end_.x(), 10);
 }
 
 

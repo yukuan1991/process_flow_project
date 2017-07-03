@@ -7,7 +7,7 @@ draw_line::draw_line(QWidget *parent)
     auto button_straight_line = new ribbon_tool(this);
     auto button_broken_line = new ribbon_tool(this);
 
-    const QSize size = QSize(16, 16);
+    const QSize size = QSize(32, 32);
     button_straight_line->setIcon(QIcon("png/直线.png"));
     button_straight_line->setIconSize(size);
     button_broken_line->setIcon(QIcon("png/折线.png"));

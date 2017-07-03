@@ -16,14 +16,38 @@ std::unique_ptr<broken_line> broken_line::make(nlohmann::json data, QPointF pos,
 
 QRectF broken_line::boundingRect() const
 {
-    const auto x_min = std::min (points_.constFirst().x(), points_.constLast().x());
-    const auto y_min = std::min (points_.constFirst().y(), points_.constLast().y());
-    const auto x_max = std::max (points_.constFirst().x(), points_.constLast().x());
-    const auto y_max = std::max (points_.constFirst().y(), points_.constLast().y());
-    const QPointF left_top (x_min, y_min);
-    const QPointF bottom_right (x_max, y_max);
-    return QRectF(left_top, bottom_right);
+    return QRectF(0, 0, 1500, 1200);
 }
+//{
+//    QPointF min(100000, 100000);
+//    QPointF max(0, 0);
+//    for(auto& point : points_)
+//    {
+//        if(point.x() < min.x())
+//        {
+//            min = QPointF(point.x(), min.y());
+//        }
+//        if(point.y() < min.y())
+//        {
+//            min = QPointF(min.x(), point.y());
+//        }
+//        if(point.x() > max.x())
+//        {
+//            max = QPointF(point.x(), min.y());
+//        }
+//        if(point.y() > min.y())
+//        {
+//            max = QPointF(max.x(), point.y());
+//        }
+//    }
+//    const auto x_min = std::min (points_.constFirst().x(), points_.constLast().x());
+//    const auto y_min = std::min (points_.constFirst().y(), points_.constLast().y());
+//    const auto x_max = std::max (points_.constFirst().x(), points_.constLast().x());
+//    const auto y_max = std::max (points_.constFirst().y(), points_.constLast().y());
+//    const QPointF left_top (x_min, y_min);
+//    const QPointF bottom_right (x_max, y_max);
+//    return QRectF(min.x(), min.y() - 5, (max.x() - min.y() + 5), (max.y() - min.y() + 5));
+//}
 
 void broken_line::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -36,6 +60,8 @@ void broken_line::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setPen(the_pen);
 
     painter->drawPolyline(points_);
+//    painter->drawPath(shape());
+//    painter->drawRect(boundingRect());
 }
 
 QPainterPath broken_line::shape() const

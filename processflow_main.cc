@@ -18,7 +18,7 @@ processflow_main::processflow_main(QWidget *parent) :
     ui->setupUi(this);
     set_button_enabled();
     ui->mdiarea->setViewMode(QMdiArea::TabbedView);
-    ui->mdiarea->setBackground(QBrush(QColor("#D7D7D7")));
+//    ui->mdiarea->setBackground(QBrush(QColor("#D7D7D7")));
     setWindowIcon(QIcon("png/工艺流程图标.png"));
     init_conn();
 }

@@ -1,6 +1,6 @@
 ﻿#include "canvas_body.h"
 
-
+#include <QDebug>
 
 canvas_body::~canvas_body()
 {

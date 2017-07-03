@@ -65,7 +65,7 @@ class ribbon_button : public QPushButton
     Q_OBJECT
 public:
     template<typename ... Args>
-    ribbon_button (Args && ... p) : QPushButton(std::forward<Args> (p)...) {}
+    ribbon_button (Args && ... p) : QPushButton(std::forward<Args> (p)...) {  }
 };
 
 class ribbon_menu : public QMenu
@@ -96,7 +96,7 @@ public:
         label_icon->setPixmap(pix);
 
         QLabel* label_text = new QLabel(text,this);
-        label_text->setAlignment (Qt::AlignCenter);
+        label_text->setAlignment (Qt::AlignVCenter);
 
         QHBoxLayout* layout = new QHBoxLayout;
         layout->setContentsMargins(1, 1, 1, 1);

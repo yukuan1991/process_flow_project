@@ -45,7 +45,10 @@ protected:
     void add_detail (const std::string & key, json data);
     optional<std::string> find_attribute (const std::string& key) const;
 protected:
-
+//    bool sceneEvent(QEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+protected:
     qreal item_width_ = 100;
     qreal item_height_ = item_width_ * 0.8;
     static constexpr qreal narrow_object_ratio_ = 1.2;

@@ -14,7 +14,7 @@ draw_graph::draw_graph(QWidget *parent)
     auto button_finished_product = new ribbon_tool(this);
 
 
-    const QSize size = QSize(16, 16);
+    const QSize size = QSize(32, 32);
     button_raw_material->setIcon(QIcon("png/原材料.png"));
     button_raw_material->setIconSize(size);
     button_machining->setIcon(QIcon("png/加工.png"));
