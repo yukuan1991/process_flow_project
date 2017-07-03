@@ -16,7 +16,7 @@ std::unique_ptr<broken_line> broken_line::make(nlohmann::json data, QPointF pos,
 
 QRectF broken_line::boundingRect() const
 {
-    return QRectF(0, 0, 1500, 1200);
+    return QRectF(-5, -5, 1500, 1200);
 }
 //{
 //    QPointF min(100000, 100000);

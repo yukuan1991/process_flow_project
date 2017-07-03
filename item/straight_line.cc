@@ -31,7 +31,7 @@ void straight_line::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 QRectF straight_line::boundingRect() const
 {
-    return QRectF(0, -5, end_.x(), 10);
+    return QRectF(-5, -5, 1500, 1200);
 }
 
 
