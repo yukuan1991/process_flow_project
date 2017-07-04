@@ -3,7 +3,7 @@
 draw::draw(QWidget *parent)
     : QFrame(parent)
 {
-    setFrameShape(QFrame::Box);
+    setFrameShape(QFrame::StyledPanel);
     setFrameShadow(QFrame::Raised);
 }
 
