@@ -645,6 +645,21 @@ void canvas_view::restore_cursor_shape()
     QApplication::setOverrideCursor(cursor);
 }
 
+void canvas_view::on_cut()
+{
+
+}
+
+void canvas_view::on_copy()
+{
+
+}
+
+void canvas_view::on_paste()
+{
+
+}
+
 canvas_view::~canvas_view()
 {
 

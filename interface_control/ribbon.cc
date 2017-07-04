@@ -27,7 +27,7 @@ ribbon::ribbon(QWidget *parent)
     graph_ = make_unique<draw_graph> (this);
     line_ = make_unique<draw_line> (this);
 
-    connect(this, &ribbon::set_enabled, [this] (bool b){ qDebug() << b; });
+//    connect(this, &ribbon::set_enabled, [this] (bool b){ qDebug() << b; });
     setup_ui();
 }
 
@@ -157,6 +157,27 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
     upper_layout->setSpacing (10);
 
     constexpr auto len = 39;
+    {
+        auto btn = make_button (QPixmap ("png/剪切.png").scaled (len, len), "剪切");
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
+        connect (btn.get (), &QToolButton::clicked, this, &ribbon::cut);
+        upper_layout->addWidget (btn.release ());
+    }
+
+    {
+        auto btn = make_button (QPixmap ("png/复制.png").scaled (len, len), "复制");
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
+        connect (btn.get (), &QToolButton::clicked, this, &ribbon::copy);
+        upper_layout->addWidget (btn.release ());
+    }
+
+    {
+        auto btn = make_button (QPixmap ("png/粘贴.png").scaled (len, len), "粘贴");
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
+        connect (btn.get (), &QToolButton::clicked, this, &ribbon::paste);
+        upper_layout->addWidget (btn.release ());
+    }
+
 
     {
         auto btn = make_button (QPixmap ("png/删除.png").scaled (len, len), "删除");

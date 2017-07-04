@@ -26,6 +26,9 @@ signals:
     void save_as ();
     void quit ();
 
+    void cut();
+    void copy();
+    void paste();
     void delete_selected();
     void selected_all();
 

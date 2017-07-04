@@ -50,6 +50,9 @@ public:
     void set_type (draw_type t);
     void restore_cursor_shape();
 public:
+    void on_cut();
+    void on_copy();
+    void on_paste();
     void select_allitems();
     void delete_selected ();
 public:

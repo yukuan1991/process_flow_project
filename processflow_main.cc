@@ -10,6 +10,7 @@
 #include <base/io/file/file.hpp>
 #include <base/utils/charset.hpp>
 #include <QCloseEvent>
+#include <QDebug>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -230,6 +231,10 @@ canvas_view *processflow_main::create_canvas_body()
     connect (ui->process_ribbon, &ribbon::graph_clicked, ptr_canvas, &canvas_view::set_type_string);
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
     connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
+
+    connect (ui->process_ribbon, &ribbon::copy, ptr_canvas, &canvas_view::on_copy);
+    connect (ui->process_ribbon, &ribbon::cut, ptr_canvas, &canvas_view::on_cut);
+    connect (ui->process_ribbon, &ribbon::paste, ptr_canvas, &canvas_view::on_paste);
     connect (ui->process_ribbon, &ribbon::delete_selected, ptr_canvas, &canvas_view::delete_selected);
     connect (ui->process_ribbon, &ribbon::selected_all, ptr_canvas, &canvas_view::select_allitems);
 

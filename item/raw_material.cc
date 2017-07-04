@@ -2,7 +2,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
-#include <QDebug>
 #include <algorithm>
 
 using namespace std;
