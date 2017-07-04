@@ -17,10 +17,6 @@ using std::string;
 using std::begin;
 using std::end;
 
-item::item(QGraphicsItem *parent) : QGraphicsObject (parent)
-{
-    setFlags (ItemIsSelectable | ItemIsMovable);
-}
 
 void item::add_attribute(const std::string & key)
 {
@@ -88,23 +84,6 @@ catch (const std::exception &)
 //    QApplication::setOverrideCursor(cursor);
 //}
 
-
-void item::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    QGraphicsObject::hoverEnterEvent(event);
-    QCursor cursor;
-    cursor.setShape(Qt::SizeAllCursor);
-    QApplication::setOverrideCursor(cursor);
-}
-
-void item::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    QGraphicsObject::hoverLeaveEvent(event);
-    QCursor cursor;
-    cursor.setShape(Qt::ArrowCursor);
-    QApplication::setOverrideCursor(cursor);
-}
-
 QPolygonF item::get_line_polygon(QLineF l, qreal width)
 {
 
@@ -133,6 +112,13 @@ void item::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setPen(Qt::black);
 }
 
+//item* item::copy()
+//{
+//    auto cp_item = new item;
+//    cp_item->item_info_ = item_info_;
+//    return cp_item;
+//}
+
 
 
 item::item(nlohmann::json data, QPointF pos, item *parent)
@@ -140,6 +126,7 @@ item::item(nlohmann::json data, QPointF pos, item *parent)
 {
     setFlags (ItemIsSelectable | ItemIsMovable);
     setAcceptHoverEvents(true);
+    setCursor (Qt::SizeAllCursor);
     item_info_ = std::move(data);
     setPos(pos);
 }

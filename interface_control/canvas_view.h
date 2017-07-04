@@ -7,9 +7,14 @@
 #include <QGraphicsItem>
 #include "canvas_body.h"
 #include <QPrinter>
+#include <QDebug>
+#include "json.hpp"
 
 using std::make_unique;
 using std::unique_ptr;
+using nlohmann::json;
+
+class item;
 
 class canvas_view : public canvas_body
 {
@@ -48,7 +53,6 @@ public:
     draw_type return_type ();
     void set_type_string (const QString & type);
     void set_type (draw_type t);
-    void restore_cursor_shape();
 public:
     void on_cut();
     void on_copy();
@@ -68,10 +72,11 @@ public:
     }
 
     ~canvas_view() ;
+    void dataChanged() { qDebug() << "clipboard change"; }
 protected:
     bool init();
 
-    canvas_view(QWidget *parent = Q_NULLPTR): canvas_body (parent) { }
+    canvas_view(QWidget *parent = nullptr): canvas_body (parent) { }
     canvas_view(QGraphicsScene *scene, QWidget *parent) : canvas_body (scene, parent) { }
 
     void keyPressEvent (QKeyEvent* event) override;
@@ -79,16 +84,6 @@ protected:
     void mousePressEvent (QMouseEvent* event) override;
     void mouseMoveEvent (QMouseEvent* event) override;
     void mouseReleaseEvent (QMouseEvent* event) override;
-
-    void enterEvent(QEvent *event) override;
-    void leaveEvent(QEvent *event) override;
-
-//    void dragEnterEvent(QDragEnterEvent * event) override;
-//    void dragMoveEvent (QDragMoveEvent * event) override;
-//    void dropEvent (QDropEvent * event) override;
-//    void wheelEvent (QWheelEvent* event) override;
-
-//    void closeEvent (QCloseEvent * event) override;
 private:
     void machining_press_event (QMouseEvent* event);
     void machining_release_event (QMouseEvent* event);
@@ -119,7 +114,9 @@ private:
     unique_ptr<QGraphicsLineItem>  straight_line_item_ = nullptr;
     std::vector<unique_ptr<QGraphicsLineItem>> broken_lines_;
 
-    std::vector<QGraphicsItem*> graphics_;
+    std::vector<json> data_;
+
+//    std::vector<QGraphicsItem*> graphics_;
 
     bool unsaved_content_ = false;
 };

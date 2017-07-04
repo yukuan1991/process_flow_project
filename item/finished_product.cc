@@ -8,17 +8,17 @@
 
 using namespace std::string_literals;
 
-unique_ptr<finished_product> finished_product::make(QPointF point)
-{
-    auto ret = unique_ptr <finished_product> (new finished_product(point));
+//unique_ptr<finished_product> finished_product::make(QPointF point)
+//{
+//    auto ret = unique_ptr <finished_product> (new finished_product(point));
 
-    if (ret == nullptr or !ret->init())
-    {
-        return nullptr;
-    }
+//    if (ret == nullptr or !ret->init())
+//    {
+//        return nullptr;
+//    }
 
-    return ret;
-}
+//    return ret;
+//}
 
 unique_ptr<finished_product> finished_product::make(nlohmann::json data, QPointF pos, item *parent)
 {
@@ -32,15 +32,16 @@ unique_ptr<finished_product> finished_product::make(nlohmann::json data, QPointF
     return ret;
 }
 
-finished_product::finished_product(QPointF point)
-{
-    const QFontMetricsF metrics(font_);
-    const auto height = metrics.height();
-    bounding_rect_ = QRectF(0.07 * item_width_ - 2, item_height_ * 25 / 80 -2,
-                             0.85 * item_width_ + 2, height * 2 + 2);
-    const QPointF pos (point.x() - item_width_/2, point.y() - item_height_/2);
-    setPos(pos);
-}
+//finished_product::finished_product(QPointF point)
+//    :item ({}, {}, {})
+//{
+//    const QFontMetricsF metrics(font_);
+//    const auto height = metrics.height();
+//    bounding_rect_ = QRectF(0.07 * item_width_ - 2, item_height_ * 25 / 80 -2,
+//                             0.85 * item_width_ + 2, height * 2 + 2);
+//    const QPointF pos (point.x() - item_width_/2, point.y() - item_height_/2);
+//    setPos(pos);
+//}
 
 finished_product::finished_product(nlohmann::json data, QPointF pos, item *parent)
     : item(std::move(data), pos, parent)

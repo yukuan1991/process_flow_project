@@ -10,7 +10,7 @@ public:
     static std::unique_ptr<raw_material> make (QPointF point);
     static std::unique_ptr<raw_material> make (json data, QPointF pos, item* parent);
 protected:
-    raw_material (QPointF point);
+//    raw_material (QPointF point);
     raw_material (json data, QPointF pos, item* parent = nullptr);
     bool init ();
     void paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;

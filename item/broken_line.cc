@@ -87,11 +87,12 @@ QPainterPath broken_line::shape() const
 }
 
 
-broken_line::broken_line(QVector<QPointF> points)
-    :points_ (std::move (points))
-{
+//broken_line::broken_line(QVector<QPointF> points)
+//    :item ({}, {}, {})
+//    ,points_ (std::move (points))
+//{
 
-}
+//}
 
 broken_line::broken_line(nlohmann::json data, QPointF pos, item *parent)
     : item(std::move(data), pos, parent)

@@ -3,7 +3,9 @@
 #include "json.hpp"
 #include "item/item.h"
 #include <QEvent>
-#include <QApplication>
+#include "shape_mime_data.h"
+#include <QClipboard>
+#include <QDebug>
 
 using nlohmann::json;
 
@@ -25,7 +27,10 @@ bool canvas_view::init()
         broken_lines_.clear();
     });
 
-    connect (this, &canvas_view::draw_finished, this, &canvas_view::restore_cursor_shape);
+    connect (this, &canvas_view::draw_finished, [this]
+    {
+        this->setCursor(Qt::ArrowCursor);
+    });
 
 //    connect (this, &canvas_view::scene_item_changed,
 //             [] { static auto i = 0; qDebug () << "scene_item_changed" << ++i; });
@@ -89,6 +94,25 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
 
 void canvas_view::mouseMoveEvent(QMouseEvent *event)
 {
+    qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+    if(return_type() != canvas_view::draw_type::NONE)
+    {
+        qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+        const auto scene_pos = mapToScene (event->pos());
+        qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+        if (scene_->effective_rect().contains(scene_pos))
+        {
+            qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+            setCursor(Qt::CrossCursor);
+        }
+        else
+        {
+            qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+            setCursor(Qt::ArrowCursor);
+        }
+        qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+    }
+    qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
     switch (return_type())
     {
     case canvas_view::draw_type::STRAIGHTLINE:
@@ -133,23 +157,6 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
         canvas_body::mouseReleaseEvent (event);
         break;
     }
-}
-
-void canvas_view::enterEvent(QEvent *event)
-{
-    canvas_body::enterEvent(event);
-    if(return_type() != canvas_view::draw_type::NONE)
-    {
-        QCursor cursor;
-        cursor.setShape(Qt::CrossCursor);
-        QApplication::setOverrideCursor(cursor);
-    }}
-
-void canvas_view::leaveEvent(QEvent *event)
-{
-    canvas_body::leaveEvent(event);
-
-    restore_cursor_shape();
 }
 
 //void canvas_view::closeEvent(QCloseEvent *event)
@@ -638,27 +645,114 @@ void canvas_view::set_type(canvas_view::draw_type t)
     emit type_changed(t);
 }
 
-void canvas_view::restore_cursor_shape()
-{
-    QCursor cursor;
-    cursor.setShape(Qt::ArrowCursor);
-    QApplication::setOverrideCursor(cursor);
-}
 
 void canvas_view::on_cut()
 {
+    const auto selected_items = scene ()->selectedItems();
+    if(!selected_items.empty())
+    {
+        for (auto & it : selected_items)
+        {
+            auto casted_item = dynamic_cast<item*> (it);
+            if (casted_item == nullptr)
+            {
+                continue;
+            }
+            it->hide();
 
+            const auto pos = casted_item->pos ();
+
+            json json_pos {{"x", pos.x () + 10}, {"y", pos.y () + 10}};
+            data_.push_back ({{"pos", std::move (json_pos)}, {"detail", casted_item->dump ()}});
+        }
+    }
 }
 
 void canvas_view::on_copy()
 {
+    const auto selected_items = scene ()->selectedItems();
+    if(selected_items.empty())
+    {
+        return;
+    }
 
+    data_.clear();
+
+    for (auto & it : selected_items)
+    {
+        auto casted_item = dynamic_cast<item*> (it);
+        if (casted_item == nullptr)
+        {
+            continue;
+        }
+
+        const auto pos = casted_item->pos ();
+
+        json json_pos {{"x", pos.x ()}, {"y", pos.y () }};
+        data_.push_back ({{"pos", json_pos}, {"detail", casted_item->dump ()}});
+    }
 }
 
 void canvas_view::on_paste()
 {
-
+    qDebug() << "on_paste";
+    if(!data_.empty())
+    {
+        for(auto& d : data_)
+        {
+            auto it = item::make(d);
+            scene()->addItem(it.get());
+            it->setPos (it->pos () + QPointF (10, 10));
+            it.release();
+        }
+    }
 }
+
+//void canvas_view::on_cut()
+//{
+//    QList<QGraphicsItem *> copylist ;
+//    foreach (QGraphicsItem *i , scene_->selectedItems()) {
+//        item *sp = qgraphicsitem_cast<item*>(i);
+//        QGraphicsItem * copy = sp->copy();
+//        if ( copy )
+//            copylist.append(copy);
+//    }
+//    QUndoCommand *deleteCommand = new DeleteCommand(scene);
+//    undoStack->push(deleteCommand);
+//    if ( copylist.count() > 0 ){
+//        ShapeMimeData * data = new ShapeMimeData( copylist );
+//        QApplication::clipboard()->setMimeData(data);
+//    }
+//}
+
+//void canvas_view::on_copy()
+//{
+//    shape_mime_data* data = new shape_mime_data(scene_->selectedItems());
+//    QApplication::clipboard()->setMimeData(data);
+//}
+
+//void canvas_view::on_paste()
+//{
+//    QMimeData * mp = const_cast<QMimeData*>(QApplication::clipboard()->mimeData()) ;
+//    shape_mime_data * data = dynamic_cast<shape_mime_data*>(mp);
+//    if (data)
+//    {
+//        scene_->clearSelection();
+//        foreach (QGraphicsItem * i , data->items() )
+//        {
+//            item *sp = qgraphicsitem_cast<item*>(i);
+//            item * copy = sp->copy();
+//            if ( copy )
+//            {
+//                copy->setSelected(true);
+//                copy->moveBy(10,10);
+//                scene_->addItem(copy);
+                //                QUndoCommand *addCommand = new AddCommand(copy, scene);
+                //                undoStack->push(addCommand);
+//            }
+//        }
+//    }
+//}
 
 canvas_view::~canvas_view()
 {

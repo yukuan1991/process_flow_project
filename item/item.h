@@ -37,17 +37,12 @@ public:
 
     QRectF boundingRect () const override;
     void paint (QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
-
+//    item* copy();
 protected:
     explicit item(json data, QPointF pos, item* parent);
-    explicit item(QGraphicsItem *parent = nullptr);
     void add_attribute (const std::string& key);
     void add_detail (const std::string & key, json data);
     optional<std::string> find_attribute (const std::string& key) const;
-protected:
-//    bool sceneEvent(QEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 protected:
     qreal item_width_ = 100;
     qreal item_height_ = item_width_ * 0.8;

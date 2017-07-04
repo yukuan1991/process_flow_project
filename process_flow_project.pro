@@ -45,7 +45,8 @@ SOURCES += main.cc\
     interface_control/attribute.cc \
     interface_control/draw.cc \
     interface_control/draw_graph.cc \
-    interface_control/draw_line.cc
+    interface_control/draw_line.cc \
+    shape_mime_data.cc
 
 HEADERS  += \
     interface_control/ribbon.h \
@@ -65,7 +66,8 @@ HEADERS  += \
     interface_control/draw.h \
     interface_control/ribbon_tool.hpp \
     interface_control/draw_graph.h \
-    interface_control/draw_line.h
+    interface_control/draw_line.h \
+    shape_mime_data.h
 
 FORMS    += \
     processflow_main.ui

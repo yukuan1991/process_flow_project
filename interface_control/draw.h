@@ -13,7 +13,7 @@ public:
     virtual ~draw() {}
     QString status() { return status_; }
     void reset_status ();
-    std::vector<ribbon_tool*> buttons() { return buttons_; }
+    const std::vector<ribbon_tool*>& buttons() { return buttons_; }
 protected:
     void on_button_pressed();
 protected:

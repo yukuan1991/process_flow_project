@@ -7,17 +7,17 @@
 using namespace std;
 
 
-std::unique_ptr<raw_material> raw_material::make(QPointF point)
-{
-    auto ret = std::unique_ptr<raw_material> ( new raw_material (point));
+//std::unique_ptr<raw_material> raw_material::make(QPointF point)
+//{
+//    auto ret = std::unique_ptr<raw_material> ( new raw_material (point));
 
-    if (ret == nullptr or !ret->init())
-    {
-        return nullptr;
-    }
+//    if (ret == nullptr or !ret->init())
+//    {
+//        return nullptr;
+//    }
 
-    return ret;
-}
+//    return ret;
+//}
 
 std::unique_ptr<raw_material> raw_material::make(nlohmann::json data, QPointF pos, item *parent)
 {
@@ -31,18 +31,19 @@ std::unique_ptr<raw_material> raw_material::make(nlohmann::json data, QPointF po
     return ret;
 }
 
-raw_material::raw_material(QPointF point)
-{
-    const QFontMetricsF metrics(font_);
-    const auto height = metrics.height();
-    bounding_rect_ = QRectF(0.07 * item_width_ - 2, item_height_ * 25 / 80 -2,
-                             0.85 * item_width_ + 2, height * 2 + 2);
+//raw_material::raw_material(QPointF point)
+//    :item ({}, {}, {})
+//{
+//    const QFontMetricsF metrics(font_);
+//    const auto height = metrics.height();
+//    bounding_rect_ = QRectF(0.07 * item_width_ - 2, item_height_ * 25 / 80 -2,
+//                             0.85 * item_width_ + 2, height * 2 + 2);
 
-    const QPointF pos(point.x() - item_width_/2, point.y() - item_height_/2);
-    setPos (pos);
+//    const QPointF pos(point.x() - item_width_/2, point.y() - item_height_/2);
+//    setPos (pos);
 
-    setSelected(true);
-}
+//    setSelected(true);
+//}
 
 raw_material::raw_material(nlohmann::json data, QPointF pos, item *parent)
     : item(std::move(data), pos, parent)
