@@ -60,71 +60,111 @@ void canvas_view::keyPressEvent(QKeyEvent *event)
 
 void canvas_view::mousePressEvent(QMouseEvent *event)
 {
-    switch (return_type())
+    if(return_type() != canvas_view::draw_type::NONE)
     {
-    case canvas_view::draw_type::FINISHEDPRODUCTED:
-        finished_product_press_event(event);
+        qDebug() << __FUNCTION__ << " " << __LINE__;
+        const auto scene_pos = mapToScene (event->pos());
+
+        if (scene_->effective_rect().contains(scene_pos))
+        {
+            switch (return_type())
+            {
+            case canvas_view::draw_type::FINISHEDPRODUCTED:
+                qDebug() << __FUNCTION__ << " " << __LINE__;
+
+                finished_product_press_event(event);
+                canvas_body::mousePressEvent (event);
+                break;
+            case canvas_view::draw_type::RAWMATERIAL:
+                qDebug() << __FUNCTION__ << " " << __LINE__;
+
+                rawmaterial_press_event(event);
+                canvas_body::mousePressEvent (event);
+                break;
+            case canvas_view::draw_type::MACHINING:
+                qDebug() << __FUNCTION__ << " " << __LINE__;
+
+                machining_press_event(event);
+                canvas_body::mousePressEvent (event);
+                break;
+            case canvas_view::draw_type::CHECKOUT:
+                qDebug() << __FUNCTION__ << " " << __LINE__;
+
+                checkout_press_event(event);
+                canvas_body::mousePressEvent (event);
+                break;
+            case canvas_view::draw_type::STRAIGHTLINE:
+                qDebug() << __FUNCTION__ << " " << __LINE__;
+
+                straightline_press_event(event);
+                canvas_body::mousePressEvent(event);
+                break;
+            case canvas_view::draw_type::BROKENLINE:
+                qDebug() << __FUNCTION__ << " " << __LINE__;
+
+                brokenline_press_event(event);
+                canvas_body::mousePressEvent(event);
+                break;
+            default:
+                qDebug() << __FUNCTION__ << " " << __LINE__;
+
+                canvas_body::mousePressEvent (event);
+                break;
+            }
+        }
+    }
+    else
+    {
+        qDebug() << __FUNCTION__ << " " << __LINE__;
+
         canvas_body::mousePressEvent (event);
-        break;
-    case canvas_view::draw_type::RAWMATERIAL:
-        rawmaterial_press_event(event);
-        canvas_body::mousePressEvent (event);
-        break;
-    case canvas_view::draw_type::MACHINING:
-        machining_press_event(event);
-        canvas_body::mousePressEvent (event);
-        break;
-    case canvas_view::draw_type::CHECKOUT:
-        checkout_press_event(event);
-        canvas_body::mousePressEvent (event);
-        break;
-    case canvas_view::draw_type::STRAIGHTLINE:
-        straightline_press_event(event);
-        canvas_body::mousePressEvent(event);
-        break;
-    case canvas_view::draw_type::BROKENLINE:
-        brokenline_press_event(event);
-        canvas_body::mousePressEvent(event);
-        break;
-    default:
-        canvas_body::mousePressEvent (event);
-        break;
     }
 }
 
 void canvas_view::mouseMoveEvent(QMouseEvent *event)
 {
-    qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
     if(return_type() != canvas_view::draw_type::NONE)
     {
-        qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
         const auto scene_pos = mapToScene (event->pos());
-        qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
         if (scene_->effective_rect().contains(scene_pos))
         {
-            qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
             setCursor(Qt::CrossCursor);
         }
         else
         {
-            qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
             setCursor(Qt::ArrowCursor);
         }
-        qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+        switch (return_type())
+        {
+        case canvas_view::draw_type::STRAIGHTLINE:
+            straightline_move_event(event);
+            break;
+        case canvas_view::draw_type::BROKENLINE:
+            brokenline_move_event(event);
+            break;
+        default:
+            canvas_body::mouseMoveEvent (event);
+            break;
+        }
     }
-    qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
-    switch (return_type())
+    else
     {
-    case canvas_view::draw_type::STRAIGHTLINE:
-        straightline_move_event(event);
-        break;
-    case canvas_view::draw_type::BROKENLINE:
-        brokenline_move_event(event);
-        break;
-    default:
-        canvas_body::mouseMoveEvent (event);
-        break;
+        const auto scene_pos = mapToScene (event->pos());
+        if (scene_->effective_rect().contains(scene_pos))
+        {
+            canvas_body::mouseMoveEvent(event);
+
+            auto items = scene_->items();
+            for(auto & it : items)
+            {
+                if(it->boundingRect().contains(scene_pos))
+                {
+                    setCursor(Qt::SizeAllCursor);
+                }
+            }
+        }
     }
+
 }
 
 void canvas_view::mouseReleaseEvent(QMouseEvent *event)
@@ -651,6 +691,7 @@ void canvas_view::on_cut()
     const auto selected_items = scene ()->selectedItems();
     if(!selected_items.empty())
     {
+        data_.clear();
         for (auto & it : selected_items)
         {
             auto casted_item = dynamic_cast<item*> (it);
@@ -658,12 +699,12 @@ void canvas_view::on_cut()
             {
                 continue;
             }
-            it->hide();
 
             const auto pos = casted_item->pos ();
 
-            json json_pos {{"x", pos.x () + 10}, {"y", pos.y () + 10}};
+            json json_pos {{"x", pos.x ()}, {"y", pos.y ()}};
             data_.push_back ({{"pos", std::move (json_pos)}, {"detail", casted_item->dump ()}});
+            delete it;
         }
     }
 }
@@ -696,6 +737,16 @@ void canvas_view::on_copy()
 void canvas_view::on_paste()
 {
     qDebug() << "on_paste";
+    const auto selected_items = scene ()->selectedItems();
+    if(!selected_items.empty())
+    {
+        for (auto & it : selected_items)
+        {
+            it->setSelected(false);
+        }
+    }
+
+
     if(!data_.empty())
     {
         for(auto& d : data_)
@@ -703,8 +754,10 @@ void canvas_view::on_paste()
             auto it = item::make(d);
             scene()->addItem(it.get());
             it->setPos (it->pos () + QPointF (10, 10));
+            it->setSelected(true);
             it.release();
         }
+
     }
 }
 

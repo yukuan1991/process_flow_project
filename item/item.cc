@@ -126,7 +126,7 @@ item::item(nlohmann::json data, QPointF pos, item *parent)
 {
     setFlags (ItemIsSelectable | ItemIsMovable);
     setAcceptHoverEvents(true);
-    setCursor (Qt::SizeAllCursor);
+//    setCursor (Qt::SizeAllCursor);
     item_info_ = std::move(data);
     setPos(pos);
 }
