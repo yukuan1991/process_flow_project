@@ -3,7 +3,8 @@
 #include "json.hpp"
 #include "item/item.h"
 #include <QEvent>
-#include "shape_mime_data.h"
+#include <QIcon>
+#include <QMenu>
 #include <QClipboard>
 #include <QDebug>
 
@@ -21,16 +22,17 @@ bool canvas_view::init()
     setRenderHints (QPainter::Antialiasing);
     setDragMode(RubberBandDrag);
 
+
     connect (this, &canvas_view::type_changed, [this] (auto && )
     {
         straight_line_item_ = nullptr;
         broken_lines_.clear();
     });
 
-    connect (this, &canvas_view::draw_finished, [this]
-    {
-        this->setCursor(Qt::ArrowCursor);
-    });
+//    connect (this, &canvas_view::draw_finished, [this]
+//    {
+//        this->setCursor(Qt::ArrowCursor);
+//    });
 
 //    connect (this, &canvas_view::scene_item_changed,
 //             [] { static auto i = 0; qDebug () << "scene_item_changed" << ++i; });
@@ -40,6 +42,20 @@ bool canvas_view::init()
 
     return true;
 }
+
+//void canvas_view::create_actions()
+//{
+//    pop_menu_ = new QMenu (this);
+//    copy_action_ = new QAction (QIcon("png/复制.png"), "复制", this);
+//    paste_action_ = new QAction (QIcon("png/粘贴.png"), "粘贴", this);
+//    cut_action_ = new QAction (QIcon("png/剪切.png"), "剪切",this);
+
+//    pop_menu_ = make_unique<QMenu> ();
+//    copy_action_ = make_unique<QAction> (QIcon("png/复制.png"), "复制", this);
+//    paste_action_ = make_unique<QAction> (QIcon("png/粘贴.png"), "粘贴", this);
+//    cut_action_ = make_unique<QAction> (QIcon("png/剪切.png"), "剪切",this);
+
+//}
 
 void canvas_view::keyPressEvent(QKeyEvent *event)
 {
@@ -123,48 +139,53 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
 
 void canvas_view::mouseMoveEvent(QMouseEvent *event)
 {
+    qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
     if(return_type() != canvas_view::draw_type::NONE)
     {
+        qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
         const auto scene_pos = mapToScene (event->pos());
+        qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
         if (scene_->effective_rect().contains(scene_pos))
         {
+            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             setCursor(Qt::CrossCursor);
         }
-        else
-        {
-            setCursor(Qt::ArrowCursor);
-        }
+//        else
+//        {
+//            setCursor(Qt::ArrowCursor);
+//        }
         switch (return_type())
         {
         case canvas_view::draw_type::STRAIGHTLINE:
+            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             straightline_move_event(event);
             break;
         case canvas_view::draw_type::BROKENLINE:
+            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             brokenline_move_event(event);
             break;
         default:
+            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             canvas_body::mouseMoveEvent (event);
             break;
         }
     }
     else
     {
+        setCursor(Qt::ArrowCursor);
+        qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
         const auto scene_pos = mapToScene (event->pos());
         if (scene_->effective_rect().contains(scene_pos))
         {
+            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             canvas_body::mouseMoveEvent(event);
-
-//            auto items = scene_->items();
-//            for(auto & it : items)
-//            {
-//                if(it->boundingRect().contains(scene_pos))
-//                {
-//                    setCursor(Qt::SizeAllCursor);
-//                }
-//            }
+            auto items = scene_->items();
+            for(auto & it : items)
+            {
+                it->setCursor(Qt::SizeAllCursor);
+            }
         }
     }
-
 }
 
 void canvas_view::mouseReleaseEvent(QMouseEvent *event)
@@ -197,6 +218,17 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
         canvas_body::mouseReleaseEvent (event);
         break;
     }
+}
+
+void canvas_view::contextMenuEvent(QContextMenuEvent *event)
+{
+    pop_menu_->clear();
+    pop_menu_->addAction(copy_action_);
+    pop_menu_->addAction(paste_action_);
+    pop_menu_->addAction(cut_action_);
+
+    pop_menu_->exec(QCursor::pos());
+    event->accept();
 }
 
 //void canvas_view::closeEvent(QCloseEvent *event)
