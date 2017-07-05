@@ -56,7 +56,6 @@ raw_material::raw_material(nlohmann::json data, QPointF pos, item *parent)
     setPos (pos);
     up_date();
 
-
 }
 
 

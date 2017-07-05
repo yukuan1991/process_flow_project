@@ -69,6 +69,7 @@ bool attribute::init()
             edit->setObjectName (key.data());
 
             connect (edit.get (), &QLineEdit::textChanged, this, &attribute::set_changed_text);
+            connect (edit.get (), &QLineEdit::textChanged, this, &attribute::submit);
             connect (this, &attribute::clear, edit.get (), &QLineEdit::clear);
 //            connect(edit.get(), &QLineEdit::textChanged, [this, key = key] (auto&& text)
 //            {
@@ -79,18 +80,24 @@ bool attribute::init()
             i ++;
         }
 
-        auto button_submit = std::make_unique<QPushButton>("提交", this);
-        connect (button_submit.get (), &QPushButton::clicked, this, &attribute::submit);
-        layout->addWidget(button_submit.release(), i, 1);
-        i ++;
+//        auto button_submit = std::make_unique<QPushButton>("提交", this);
+//        connect (button_submit.get (), &QPushButton::clicked, this, &attribute::submit);
+//        layout->addWidget(button_submit.release(), i, 1);
+//        i ++;
+
+//        auto spaceritem = std::make_unique<QSpacerItem> (10, 500);
+//        layout->addItem(spaceritem.release(), i, 1);
+        layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), i, 1);
+        i++;
 
         auto button_clear = std::make_unique<QPushButton>("清空", this);
         connect (button_clear.get(), &QPushButton::clicked, this, &attribute::clear_edit_text);
+
         layout->addWidget(button_clear.release(), i, 1);
         i++;
 
-        layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), i, 1);
-
+//        layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), i, 1);
+        setLayout(layout);
         return true;
 }
 

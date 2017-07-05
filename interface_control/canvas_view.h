@@ -116,6 +116,7 @@ private:
 
     std::vector<json> data_;
 
+
 //    std::vector<QGraphicsItem*> graphics_;
 
     bool unsaved_content_ = false;

@@ -154,14 +154,14 @@ void canvas_view::mouseMoveEvent(QMouseEvent *event)
         {
             canvas_body::mouseMoveEvent(event);
 
-            auto items = scene_->items();
-            for(auto & it : items)
-            {
-                if(it->boundingRect().contains(scene_pos))
-                {
-                    setCursor(Qt::SizeAllCursor);
-                }
-            }
+//            auto items = scene_->items();
+//            for(auto & it : items)
+//            {
+//                if(it->boundingRect().contains(scene_pos))
+//                {
+//                    setCursor(Qt::SizeAllCursor);
+//                }
+//            }
         }
     }
 
@@ -692,6 +692,7 @@ void canvas_view::on_cut()
     if(!selected_items.empty())
     {
         data_.clear();
+
         for (auto & it : selected_items)
         {
             auto casted_item = dynamic_cast<item*> (it);
@@ -718,6 +719,7 @@ void canvas_view::on_copy()
     }
 
     data_.clear();
+
 
     for (auto & it : selected_items)
     {
