@@ -196,7 +196,7 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
     }
 
     block1_layout->addLayout (upper_layout.release ());
-    auto label = new QLabel ("第一类");
+    auto label = new QLabel ("画布操作");
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block1_layout->addWidget (label);
     layout->addLayout (block1_layout.release (), 0);
@@ -314,7 +314,7 @@ std::unique_ptr<QWidget> ribbon::ui_window()
     }
 
     block1_layout->addLayout (upper_layout.release ());
-    auto label = new QLabel ("第一类");
+    auto label = new QLabel ("缩放");
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block1_layout->addWidget (label);
     layout->addLayout (block1_layout.release (), 0);
@@ -355,7 +355,7 @@ std::unique_ptr<QWidget> ribbon::ui_help()
     }
 
     block1_layout->addLayout (upper_layout.release ());
-    auto label = new QLabel ("第一类");
+    auto label = new QLabel ("联系我们");
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block1_layout->addWidget (label);
     layout->addLayout (block1_layout.release (), 0);

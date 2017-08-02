@@ -121,17 +121,23 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
 void canvas_view::mouseMoveEvent(QMouseEvent *event)
 {
     SCOPE_EXIT { canvas_body::mouseMoveEvent(event); };
-    if(return_type() != canvas_view::draw_type::NONE)
+    qDebug() << __PRETTY_FUNCTION__ << __LINE__;
+    if (return_type() != canvas_view::draw_type::NONE)
     {
         const auto scene_pos = mapToScene (event->pos());
+        qDebug() << __PRETTY_FUNCTION__ << __LINE__;
         if (scene_->effective_rect().contains(scene_pos))
         {
+            qDebug() << __PRETTY_FUNCTION__ << __LINE__;
             setCursor(Qt::CrossCursor);
+
         }
-//        else
-//        {
+        else
+        {
 //            setCursor(Qt::ArrowCursor);
-//        }
+            unsetCursor();
+        }
+
         switch (return_type())
         {
         case canvas_view::draw_type::STRAIGHTLINE:
@@ -144,10 +150,13 @@ void canvas_view::mouseMoveEvent(QMouseEvent *event)
             break;
         }
     }
-    else
+    else if (return_type() == canvas_view::draw_type::NONE)
     {
-        setCursor(Qt::ArrowCursor);
+        qDebug() << __PRETTY_FUNCTION__ << __LINE__;
+//        setCursor(Qt::ArrowCursor);
+        unsetCursor();
         const auto scene_pos = mapToScene (event->pos());
+        qDebug() << __PRETTY_FUNCTION__ << __LINE__;
         if (scene_->effective_rect().contains(scene_pos))
         {
             canvas_body::mouseMoveEvent(event);
@@ -162,8 +171,12 @@ void canvas_view::mouseMoveEvent(QMouseEvent *event)
 
 void canvas_view::mouseReleaseEvent(QMouseEvent *event)
 {
-
     SCOPE_EXIT { canvas_body::mouseReleaseEvent(event); };
+    if(return_type() == canvas_view::draw_type::NONE)
+    {
+        right_button_menu(event);
+    }
+
     switch (return_type())
     {
     case canvas_view::draw_type::FINISHEDPRODUCTED:
@@ -189,28 +202,25 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void canvas_view::contextMenuEvent(QContextMenuEvent *event)
-{
-    SCOPE_EXIT { canvas_body::contextMenuEvent(event); };
-//    pop_menu_->clear();
-//    pop_menu_->addAction(copy_action_);
-//    pop_menu_->addAction(paste_action_);
-//    pop_menu_->addAction(cut_action_);
+//void canvas_view::contextMenuEvent(QContextMenuEvent *event)
+//{
+//    qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
+//    SCOPE_EXIT { canvas_body::contextMenuEvent(event); };
 
-    auto menu = std::make_unique<QMenu> ();
+//    auto menu = std::make_unique<QMenu> ();
 
-    auto action_cut = menu->addAction("剪切");
-    auto action_copy = menu->addAction("复制");
-    auto action_paste = menu->addAction("粘贴");
+//    auto action_cut = menu->addAction("剪切");
+//    auto action_copy = menu->addAction("复制");
+//    auto action_paste = menu->addAction("粘贴");
 
-    connect(action_cut, &QAction::triggered, this, &canvas_view::on_cut);
-    connect(action_copy, &QAction::triggered, this, &canvas_view::on_copy);
-    connect(action_paste, &QAction::triggered, this, &canvas_view::on_paste);
+//    connect(action_cut, &QAction::triggered, this, &canvas_view::on_cut);
+//    connect(action_copy, &QAction::triggered, this, &canvas_view::on_copy);
+//    connect(action_paste, &QAction::triggered, this, &canvas_view::on_paste);
 
-    menu->exec(QCursor::pos());
-    event->accept();
+//    menu->exec(QCursor::pos());
+//    event->accept();
 
-}
+//}
 
 //void canvas_view::closeEvent(QCloseEvent *event)
 //{
@@ -547,7 +557,6 @@ void canvas_view::brokenline_press_event(QMouseEvent *event)
 
         broke.release();
 
-        emit draw_finished();
     }
 }
 
@@ -581,7 +590,10 @@ void canvas_view::brokenline_move_event(QMouseEvent *event)
 
 void canvas_view::brokenline_release_event(QMouseEvent *event)
 {
-    Q_UNUSED(event);
+    if (event->button() == Qt::RightButton)
+    {
+        emit draw_finished();
+    }
 }
 
 void canvas_view::select_allitems()
@@ -702,23 +714,23 @@ void canvas_view::set_type(canvas_view::draw_type t)
     emit type_changed(t);
 }
 
-//void canvas_view::right_button_menu(QMouseEvent *event)
-//{
-//    if (event->button() == Qt::RightButton)
-//    {
-//        auto menu = std::make_unique<QMenu> ();
+void canvas_view::right_button_menu(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+    {
+        auto menu = std::make_unique<QMenu> ();
 
-//        auto action_cut = menu->addAction("剪切");
-//        auto action_copy = menu->addAction("复制");
-//        auto action_paste = menu->addAction("粘贴");
+        auto action_cut = menu->addAction("剪切");
+        auto action_copy = menu->addAction("复制");
+        auto action_paste = menu->addAction("粘贴");
 
-//        connect(action_cut, &QAction::triggered, this, &canvas_view::on_cut);
-//        connect(action_copy, &QAction::triggered, this, &canvas_view::on_copy);
-//        connect(action_paste, &QAction::triggered, this, &canvas_view::on_paste);
+        connect(action_cut, &QAction::triggered, this, &canvas_view::on_cut);
+        connect(action_copy, &QAction::triggered, this, &canvas_view::on_copy);
+        connect(action_paste, &QAction::triggered, this, &canvas_view::on_paste);
 
-//        menu->exec(QCursor::pos());
-//    }
-//}
+        menu->exec(QCursor::pos());
+    }
+}
 
 
 void canvas_view::on_cut()

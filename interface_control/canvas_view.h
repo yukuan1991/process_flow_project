@@ -55,7 +55,7 @@ public:
     void set_type_string (const QString & type);
     void set_type (draw_type t);
 public:
-//    void right_button_menu(QMouseEvent* event);
+    void right_button_menu(QMouseEvent* event);
     void on_cut();
     void on_copy();
     void on_paste();
@@ -86,7 +86,7 @@ protected:
     void mouseMoveEvent (QMouseEvent* event) override;
     void mouseReleaseEvent (QMouseEvent* event) override;
 
-    void contextMenuEvent(QContextMenuEvent* event) override;
+//    void contextMenuEvent(QContextMenuEvent* event) override;
 private:
     void machining_press_event (QMouseEvent* event);
     void machining_release_event (QMouseEvent* event);
