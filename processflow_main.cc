@@ -190,6 +190,56 @@ void processflow_main::print_order()
     }
 }
 
+void processflow_main::cut()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->on_cut();
+}
+
+void processflow_main::copy()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->on_copy();
+}
+
+void processflow_main::paste()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->on_paste();
+}
+
+void processflow_main::del()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->delete_selected();
+}
+
+void processflow_main::select_allitems()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->select_allitems();
+}
+
 void processflow_main::zoom_in_active()
 {
     auto active_canvas = active_canvas_view();
@@ -231,13 +281,6 @@ canvas_view *processflow_main::create_canvas_body()
     connect (ui->process_ribbon, &ribbon::graph_clicked, ptr_canvas, &canvas_view::set_type_string);
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
     connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
-
-    connect (ui->process_ribbon, &ribbon::copy, ptr_canvas, &canvas_view::on_copy);
-    connect (ui->process_ribbon, &ribbon::cut, ptr_canvas, &canvas_view::on_cut);
-    connect (ui->process_ribbon, &ribbon::paste, ptr_canvas, &canvas_view::on_paste);
-    connect (ui->process_ribbon, &ribbon::delete_selected, ptr_canvas, &canvas_view::delete_selected);
-    connect (ui->process_ribbon, &ribbon::selected_all, ptr_canvas, &canvas_view::select_allitems);
-
 
 //    connect (ptr_canvas, &canvas_view::view_closed, this, &processflow_main::on_view_closed, Qt::QueuedConnection);
     connect (this, &processflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
@@ -343,6 +386,12 @@ void processflow_main::init_conn()
     connect (ui->process_ribbon, &ribbon::save_as, this, &processflow_main::file_save_as);
     connect (ui->process_ribbon, &ribbon::print, this, &processflow_main::print_order);
     connect (ui->process_ribbon, &ribbon::quit, [this](){ QWidget::close();});
+
+    connect (ui->process_ribbon, &ribbon::copy, this, &processflow_main::copy);
+    connect (ui->process_ribbon, &ribbon::cut, this, &processflow_main::cut);
+    connect (ui->process_ribbon, &ribbon::paste, this, &processflow_main::paste);
+    connect (ui->process_ribbon, &ribbon::delete_selected, this, &processflow_main::del);
+    connect (ui->process_ribbon, &ribbon::selected_all, this, &processflow_main::select_allitems);
 
     connect (ui->process_ribbon, &ribbon::zoom_in_active, this, &processflow_main::zoom_in_active);
     connect (ui->process_ribbon, &ribbon::zoom_out_active, this, &processflow_main::zoom_out_active);

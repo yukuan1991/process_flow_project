@@ -55,6 +55,7 @@ public:
     void set_type_string (const QString & type);
     void set_type (draw_type t);
 public:
+//    void right_button_menu(QMouseEvent* event);
     void on_cut();
     void on_copy();
     void on_paste();
@@ -73,10 +74,8 @@ public:
     }
 
     ~canvas_view() ;
-//    void dataChanged() { qDebug() << "clipboard change"; }
 protected:
     bool init();
-//    void create_actions();
 
     canvas_view(QWidget *parent = nullptr): canvas_body (parent) { }
     canvas_view(QGraphicsScene *scene, QWidget *parent) : canvas_body (scene, parent) { }
@@ -118,17 +117,8 @@ private:
     unique_ptr<QGraphicsLineItem>  straight_line_item_ = nullptr;
     std::vector<unique_ptr<QGraphicsLineItem>> broken_lines_;
 
-    std::vector<json> data_;
+    int paste_time;
 
-    QMenu* pop_menu_;
-    QAction* copy_action_;
-    QAction* paste_action_;
-    QAction* cut_action_;
-
-//    unique_ptr<QMenu> pop_menu_;
-//    unique_ptr<QAction> copy_action_;
-//    unique_ptr<QAction> paste_action_;
-//    unique_ptr<QAction> cut_action_;
 //    std::vector<QGraphicsItem*> graphics_;
 
     bool unsaved_content_ = false;

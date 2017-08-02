@@ -7,6 +7,9 @@
 #include <QMenu>
 #include <QClipboard>
 #include <QDebug>
+#include <base/lang/scope.hpp>
+#include <QMessageBox>
+#include <QApplication>
 
 using nlohmann::json;
 
@@ -20,8 +23,7 @@ bool canvas_view::init()
     setViewportUpdateMode(FullViewportUpdate);
     setMouseTracking(true);
     setRenderHints (QPainter::Antialiasing);
-    setDragMode(RubberBandDrag);
-
+//    setDragMode(RubberBandDrag);
 
     connect (this, &canvas_view::type_changed, [this] (auto && )
     {
@@ -43,20 +45,6 @@ bool canvas_view::init()
     return true;
 }
 
-//void canvas_view::create_actions()
-//{
-//    pop_menu_ = new QMenu (this);
-//    copy_action_ = new QAction (QIcon("png/复制.png"), "复制", this);
-//    paste_action_ = new QAction (QIcon("png/粘贴.png"), "粘贴", this);
-//    cut_action_ = new QAction (QIcon("png/剪切.png"), "剪切",this);
-
-//    pop_menu_ = make_unique<QMenu> ();
-//    copy_action_ = make_unique<QAction> (QIcon("png/复制.png"), "复制", this);
-//    paste_action_ = make_unique<QAction> (QIcon("png/粘贴.png"), "粘贴", this);
-//    cut_action_ = make_unique<QAction> (QIcon("png/剪切.png"), "剪切",this);
-
-//}
-
 void canvas_view::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsView::keyPressEvent(event);
@@ -67,18 +55,38 @@ void canvas_view::keyPressEvent(QKeyEvent *event)
         event->accept();
     }
 
+    if (event->modifiers() & Qt::CTRL and event->key() == Qt::Key_C)
+    {
+        on_copy();
+        event->accept();
+    }
+
+    if (event->modifiers() & Qt::CTRL and event->key() == Qt::Key_X)
+    {
+        on_cut();
+        event->accept();
+    }
+
+    if (event->modifiers() & Qt::CTRL and event->key() == Qt::Key_V)
+    {
+        on_paste();
+        event->accept();
+    }
+
     if (event->key() == Qt::Key_Delete)
     {
         delete_selected();
         event->accept();
     }
+
+
 }
 
 void canvas_view::mousePressEvent(QMouseEvent *event)
 {
+    SCOPE_EXIT { canvas_body::mousePressEvent(event); };
     if(return_type() != canvas_view::draw_type::NONE)
     {
-        qDebug() << __FUNCTION__ << " " << __LINE__;
         const auto scene_pos = mapToScene (event->pos());
 
         if (scene_->effective_rect().contains(scene_pos))
@@ -86,68 +94,38 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
             switch (return_type())
             {
             case canvas_view::draw_type::FINISHEDPRODUCTED:
-                qDebug() << __FUNCTION__ << " " << __LINE__;
-
                 finished_product_press_event(event);
-                canvas_body::mousePressEvent (event);
                 break;
             case canvas_view::draw_type::RAWMATERIAL:
-                qDebug() << __FUNCTION__ << " " << __LINE__;
-
                 rawmaterial_press_event(event);
-                canvas_body::mousePressEvent (event);
                 break;
             case canvas_view::draw_type::MACHINING:
-                qDebug() << __FUNCTION__ << " " << __LINE__;
-
                 machining_press_event(event);
-                canvas_body::mousePressEvent (event);
                 break;
             case canvas_view::draw_type::CHECKOUT:
-                qDebug() << __FUNCTION__ << " " << __LINE__;
-
                 checkout_press_event(event);
-                canvas_body::mousePressEvent (event);
                 break;
             case canvas_view::draw_type::STRAIGHTLINE:
-                qDebug() << __FUNCTION__ << " " << __LINE__;
-
                 straightline_press_event(event);
-                canvas_body::mousePressEvent(event);
                 break;
             case canvas_view::draw_type::BROKENLINE:
-                qDebug() << __FUNCTION__ << " " << __LINE__;
-
                 brokenline_press_event(event);
-                canvas_body::mousePressEvent(event);
                 break;
             default:
-                qDebug() << __FUNCTION__ << " " << __LINE__;
-
-                canvas_body::mousePressEvent (event);
                 break;
             }
         }
-    }
-    else
-    {
-        qDebug() << __FUNCTION__ << " " << __LINE__;
-
-        canvas_body::mousePressEvent (event);
     }
 }
 
 void canvas_view::mouseMoveEvent(QMouseEvent *event)
 {
-    qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
+    SCOPE_EXIT { canvas_body::mouseMoveEvent(event); };
     if(return_type() != canvas_view::draw_type::NONE)
     {
-        qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
         const auto scene_pos = mapToScene (event->pos());
-        qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
         if (scene_->effective_rect().contains(scene_pos))
         {
-            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             setCursor(Qt::CrossCursor);
         }
 //        else
@@ -157,27 +135,21 @@ void canvas_view::mouseMoveEvent(QMouseEvent *event)
         switch (return_type())
         {
         case canvas_view::draw_type::STRAIGHTLINE:
-            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             straightline_move_event(event);
             break;
         case canvas_view::draw_type::BROKENLINE:
-            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             brokenline_move_event(event);
             break;
         default:
-            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
-            canvas_body::mouseMoveEvent (event);
             break;
         }
     }
     else
     {
         setCursor(Qt::ArrowCursor);
-        qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
         const auto scene_pos = mapToScene (event->pos());
         if (scene_->effective_rect().contains(scene_pos))
         {
-            qDebug() << __PRETTY_FUNCTION__ << " " << __LINE__;
             canvas_body::mouseMoveEvent(event);
             auto items = scene_->items();
             for(auto & it : items)
@@ -190,23 +162,21 @@ void canvas_view::mouseMoveEvent(QMouseEvent *event)
 
 void canvas_view::mouseReleaseEvent(QMouseEvent *event)
 {
+
+    SCOPE_EXIT { canvas_body::mouseReleaseEvent(event); };
     switch (return_type())
     {
     case canvas_view::draw_type::FINISHEDPRODUCTED:
         finished_product_release_event(event);
-//        canvas_body::mouseReleaseEvent (event);
         break;
     case canvas_view::draw_type::RAWMATERIAL:
         rawmaterial_release_event(event);
-//        canvas_body::mouseReleaseEvent (event);
         break;
     case canvas_view::draw_type::STRAIGHTLINE:
         straightline_release_event(event);
-//        canvas_body::mouseReleaseEvent (event);
         break;
-    case canvas_view::draw_type::BROKENLINE:  
+    case canvas_view::draw_type::BROKENLINE:
         brokenline_release_event(event);
-//        canvas_body::mouseReleaseEvent (event);
         break;
     case canvas_view::draw_type::MACHINING:
         machining_release_event(event);
@@ -215,20 +185,31 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
         checkout_release_event(event);
         break;
     default:
-        canvas_body::mouseReleaseEvent (event);
         break;
     }
 }
 
 void canvas_view::contextMenuEvent(QContextMenuEvent *event)
 {
-    pop_menu_->clear();
-    pop_menu_->addAction(copy_action_);
-    pop_menu_->addAction(paste_action_);
-    pop_menu_->addAction(cut_action_);
+    SCOPE_EXIT { canvas_body::contextMenuEvent(event); };
+//    pop_menu_->clear();
+//    pop_menu_->addAction(copy_action_);
+//    pop_menu_->addAction(paste_action_);
+//    pop_menu_->addAction(cut_action_);
 
-    pop_menu_->exec(QCursor::pos());
+    auto menu = std::make_unique<QMenu> ();
+
+    auto action_cut = menu->addAction("剪切");
+    auto action_copy = menu->addAction("复制");
+    auto action_paste = menu->addAction("粘贴");
+
+    connect(action_cut, &QAction::triggered, this, &canvas_view::on_cut);
+    connect(action_copy, &QAction::triggered, this, &canvas_view::on_copy);
+    connect(action_paste, &QAction::triggered, this, &canvas_view::on_paste);
+
+    menu->exec(QCursor::pos());
     event->accept();
+
 }
 
 //void canvas_view::closeEvent(QCloseEvent *event)
@@ -614,15 +595,19 @@ void canvas_view::select_allitems()
 
 void canvas_view::delete_selected()
 {
-    const auto selected_items = scene ()->selectedItems();
-    for (auto & it : selected_items)
+    const auto yes = 0;
+    if(yes == QMessageBox::question(this, "删除", "是否删除？", "是", "否"))
     {
-        delete it;
-    }
+        const auto selected_items = scene ()->selectedItems();
+        for (auto & it : selected_items)
+        {
+            delete it;
+        }
 
-    if (!selected_items.empty())
-    {
-        emit scene_item_changed ();
+        if (!selected_items.empty())
+        {
+            emit scene_item_changed ();
+        }
     }
 }
 
@@ -717,29 +702,52 @@ void canvas_view::set_type(canvas_view::draw_type t)
     emit type_changed(t);
 }
 
+//void canvas_view::right_button_menu(QMouseEvent *event)
+//{
+//    if (event->button() == Qt::RightButton)
+//    {
+//        auto menu = std::make_unique<QMenu> ();
+
+//        auto action_cut = menu->addAction("剪切");
+//        auto action_copy = menu->addAction("复制");
+//        auto action_paste = menu->addAction("粘贴");
+
+//        connect(action_cut, &QAction::triggered, this, &canvas_view::on_cut);
+//        connect(action_copy, &QAction::triggered, this, &canvas_view::on_copy);
+//        connect(action_paste, &QAction::triggered, this, &canvas_view::on_paste);
+
+//        menu->exec(QCursor::pos());
+//    }
+//}
+
 
 void canvas_view::on_cut()
 {
     const auto selected_items = scene ()->selectedItems();
-    if(!selected_items.empty())
+    if(selected_items.empty())
     {
-        data_.clear();
-
-        for (auto & it : selected_items)
-        {
-            auto casted_item = dynamic_cast<item*> (it);
-            if (casted_item == nullptr)
-            {
-                continue;
-            }
-
-            const auto pos = casted_item->pos ();
-
-            json json_pos {{"x", pos.x ()}, {"y", pos.y ()}};
-            data_.push_back ({{"pos", std::move (json_pos)}, {"detail", casted_item->dump ()}});
-            delete it;
-        }
+        return;
     }
+
+    json item_info = json::array();
+    for (auto & it : selected_items)
+    {
+        auto casted_item = dynamic_cast<item*> (it);
+        if (casted_item == nullptr)
+        {
+            continue;
+        }
+
+        const auto pos = casted_item->pos ();
+
+        json json_pos {{"x", pos.x ()}, {"y", pos.y ()}};
+        item_info.push_back ({{"pos", std::move (json_pos)}, {"detail", casted_item->dump ()}});
+        delete it;
+    }
+
+    auto info = item_info.dump(4);
+    QApplication::clipboard()->setText(info.data());
+    paste_time = 0;
 }
 
 void canvas_view::on_copy()
@@ -750,9 +758,7 @@ void canvas_view::on_copy()
         return;
     }
 
-    data_.clear();
-
-
+    json item_info = json::array();
     for (auto & it : selected_items)
     {
         auto casted_item = dynamic_cast<item*> (it);
@@ -764,13 +770,16 @@ void canvas_view::on_copy()
         const auto pos = casted_item->pos ();
 
         json json_pos {{"x", pos.x ()}, {"y", pos.y () }};
-        data_.push_back ({{"pos", json_pos}, {"detail", casted_item->dump ()}});
+        item_info.push_back({{"pos", json_pos}, {"detail", casted_item->dump ()}});
     }
+
+    auto info = item_info.dump(4);
+    QApplication::clipboard()->setText(info.data());
+    paste_time = 1;
 }
 
 void canvas_view::on_paste()
 {
-    qDebug() << "on_paste";
     const auto selected_items = scene ()->selectedItems();
     if(!selected_items.empty())
     {
@@ -780,66 +789,26 @@ void canvas_view::on_paste()
         }
     }
 
+    auto board = QApplication::clipboard();
+    const auto text = board->text().toStdString();
+    const auto data = json::parse(text);
 
-    if(!data_.empty())
+    if(data.empty())
     {
-        for(auto& d : data_)
-        {
-            auto it = item::make(d);
-            scene()->addItem(it.get());
-            it->setPos (it->pos () + QPointF (10, 10));
-            it->setSelected(true);
-            it.release();
-        }
-
+        return;
     }
+
+    for(auto& d : data)
+    {
+        auto it = item::make(d);
+        scene()->addItem(it.get());
+        const auto pos = QPointF(it->pos() + QPointF(50 * paste_time, 50 * paste_time));
+        it->setPos (pos);
+        it->setSelected(true);
+        it.release();
+    }
+    ++paste_time;
 }
-
-//void canvas_view::on_cut()
-//{
-//    QList<QGraphicsItem *> copylist ;
-//    foreach (QGraphicsItem *i , scene_->selectedItems()) {
-//        item *sp = qgraphicsitem_cast<item*>(i);
-//        QGraphicsItem * copy = sp->copy();
-//        if ( copy )
-//            copylist.append(copy);
-//    }
-//    QUndoCommand *deleteCommand = new DeleteCommand(scene);
-//    undoStack->push(deleteCommand);
-//    if ( copylist.count() > 0 ){
-//        ShapeMimeData * data = new ShapeMimeData( copylist );
-//        QApplication::clipboard()->setMimeData(data);
-//    }
-//}
-
-//void canvas_view::on_copy()
-//{
-//    shape_mime_data* data = new shape_mime_data(scene_->selectedItems());
-//    QApplication::clipboard()->setMimeData(data);
-//}
-
-//void canvas_view::on_paste()
-//{
-//    QMimeData * mp = const_cast<QMimeData*>(QApplication::clipboard()->mimeData()) ;
-//    shape_mime_data * data = dynamic_cast<shape_mime_data*>(mp);
-//    if (data)
-//    {
-//        scene_->clearSelection();
-//        foreach (QGraphicsItem * i , data->items() )
-//        {
-//            item *sp = qgraphicsitem_cast<item*>(i);
-//            item * copy = sp->copy();
-//            if ( copy )
-//            {
-//                copy->setSelected(true);
-//                copy->moveBy(10,10);
-//                scene_->addItem(copy);
-                //                QUndoCommand *addCommand = new AddCommand(copy, scene);
-                //                undoStack->push(addCommand);
-//            }
-//        }
-//    }
-//}
 
 canvas_view::~canvas_view()
 {
