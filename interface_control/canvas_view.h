@@ -108,7 +108,6 @@ private:
     void brokenline_move_event (QMouseEvent* event);
     void brokenline_release_event (QMouseEvent* event);
 
-
 private:
     canvas_view::draw_type type_ = canvas_view::draw_type::NONE;
 
