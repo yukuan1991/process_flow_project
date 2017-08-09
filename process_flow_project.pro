@@ -54,11 +54,6 @@ HEADERS  += \
     interface_control/canvas_scene.h \
     interface_control/canvas_body.h \
     interface_control/canvas_view.h \
-<<<<<<< HEAD
-
-    interface_control/ribbon.h \
-=======
->>>>>>> ribbon
     interface_control/about_us_dlg.h \
     item/raw_material.h \
     item/item.h \
@@ -72,8 +67,6 @@ HEADERS  += \
     interface_control/ribbon_tool.hpp \
     interface_control/draw_graph.h \
     interface_control/draw_line.h \
-
-    interface_control/ribbon_graph.h \
     interface_control/about_us_dlg.h
 
 
