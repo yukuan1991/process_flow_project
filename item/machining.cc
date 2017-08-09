@@ -14,6 +14,29 @@ unique_ptr<machining> machining::make(json data, QPointF pos, item* parent, QCol
     return ret;
 }
 
+//machining *machining::copy()
+//{
+//    json data
+//    {
+//        {"pos",
+//            {
+//                {"x", 10},
+//                {"y", 10}
+//            }
+//        },
+//        {"detail",
+//            {
+//                {"type", "加工"},
+//                {"attribute", ""}
+//            }
+//        }
+//    };
+//    auto pos = QPointF(10, 10);
+//    auto cp_item = new machining(data, pos);
+////    cp_item->item_info_ = dump();
+//    return cp_item;
+//}
+
 machining::machining(json data, QPointF pos, item *parent)
     :item(std::move (data), pos, parent)
 {

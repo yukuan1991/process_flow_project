@@ -9,14 +9,17 @@
 #include <QFileDialog>
 #include <base/io/file/file.hpp>
 #include <base/utils/charset.hpp>
+#include <QCloseEvent>
+#include <QDebug>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::processflow_main)
 {
     ui->setupUi(this);
+    set_button_enabled();
     ui->mdiarea->setViewMode(QMdiArea::TabbedView);
-    ui->mdiarea->setBackground(QBrush(QColor("#D7D7D7")));
+    setWindowIcon(QIcon("png/工艺流程图标.png"));
     init_conn();
 }
 
@@ -25,9 +28,63 @@ processflow_main::~processflow_main()
     delete ui;
 }
 
-QMdiArea *processflow_main::area()
+//void processflow_main::closeEvent(QCloseEvent *event)
+//{
+//    QWidget::closeEvent(event);
+//    const auto list = ui->mdiarea->subWindowList();
+
+//    for (auto & sub : list)
+//    {
+//        auto view = dynamic_cast<canvas_view*> (sub->widget());
+//        assert (view != nullptr);
+//        if (!view->is_unsaved ())
+//        {
+//            continue;
+//        }
+
+//        auto ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
+//                                        "保存","忽略","取消");
+//        constexpr auto save = 0;
+//        constexpr auto ignore = 1;
+//        constexpr auto cancel = 2;
+
+//        if (ret == save)
+//        {
+//            save_subwindow (sub);
+//            ui->mdiarea->removeSubWindow(sub);
+//            sub->deleteLater ();
+//        }
+//        else if (ret == ignore)
+//        {
+//            ui->mdiarea->removeSubWindow(sub);
+//            sub->deleteLater ();
+//            continue;
+//        }
+//        else if (ret == cancel)
+//        {
+//            event->ignore ();
+//            return;
+//        }
+//    }
+//}
+
+void processflow_main::on_view_closed()
 {
-    return ui->mdiarea;
+    int ret = 0;
+    ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
+                          "保存","忽略","取消");
+    if (ret == 2)
+    {
+        return;
+    }
+    auto active_window = ui->mdiarea->activeSubWindow();
+
+    if (ret == 0)
+    {
+        file_save ();
+    }
+
+    active_window->deleteLater();
 }
 
 void processflow_main::file_new()
@@ -132,6 +189,56 @@ void processflow_main::print_order()
     }
 }
 
+void processflow_main::cut()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->on_cut();
+}
+
+void processflow_main::copy()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->on_copy();
+}
+
+void processflow_main::paste()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->on_paste();
+}
+
+void processflow_main::del()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->delete_selected();
+}
+
+void processflow_main::select_allitems()
+{
+    auto w = active_canvas_view();
+    if(w == nullptr)
+    {
+        return;
+    }
+    w->select_allitems();
+}
+
 void processflow_main::zoom_in_active()
 {
     auto active_canvas = active_canvas_view();
@@ -174,10 +281,11 @@ canvas_view *processflow_main::create_canvas_body()
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
     connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
 
-//    connect (ptr_canvas, &canvas_view::view_closed, this, &sheetflow_main::on_view_closed, Qt::QueuedConnection);
-//    connect (this, &sheetflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
+//    connect (ptr_canvas, &canvas_view::view_closed, this, &processflow_main::on_view_closed, Qt::QueuedConnection);
+    connect (this, &processflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
 
-//    ptr_canvas->set_type_string(imp->draw_widget->status());
+    ///确保当前被按下的图形按钮，在新建画布的时候有效
+    ptr_canvas->set_type_string(ui->process_ribbon->status());
 
     ui->mdiarea->addSubWindow(canvas.release ());
 
@@ -214,8 +322,8 @@ void processflow_main::canvas_selection(QGraphicsItem *the_item)
     connect (ui->attribute_widget, &attribute::submit, this, &processflow_main::on_attribute_clicked);
     connect (ui->attribute_widget, &attribute::clear, this, &processflow_main::on_attribute_clicked);
 
-//    connect (imp->attribute_widget.get (),&attribute::submit, [this]{ emit attribute_changed(); });
-//    connect (imp->attribute_widget.get (),&attribute::clear, [this]{ emit attribute_changed(); });
+    connect (ui->attribute_widget,&attribute::submit, [this]{ emit attribute_changed(); });
+    connect (ui->attribute_widget,&attribute::clear, [this]{ emit attribute_changed(); });
 
     ui->attribute_bar->setWidget (ui->attribute_widget);
 }
@@ -278,9 +386,23 @@ void processflow_main::init_conn()
     connect (ui->process_ribbon, &ribbon::print, this, &processflow_main::print_order);
     connect (ui->process_ribbon, &ribbon::quit, [this](){ QWidget::close();});
 
+    connect (ui->process_ribbon, &ribbon::copy, this, &processflow_main::copy);
+    connect (ui->process_ribbon, &ribbon::cut, this, &processflow_main::cut);
+    connect (ui->process_ribbon, &ribbon::paste, this, &processflow_main::paste);
+    connect (ui->process_ribbon, &ribbon::delete_selected, this, &processflow_main::del);
+    connect (ui->process_ribbon, &ribbon::selected_all, this, &processflow_main::select_allitems);
+
     connect (ui->process_ribbon, &ribbon::zoom_in_active, this, &processflow_main::zoom_in_active);
     connect (ui->process_ribbon, &ribbon::zoom_out_active, this, &processflow_main::zoom_out_active);
 
-
     connect (ui->process_ribbon, &ribbon::help, this, &processflow_main::help_advice);
+
+    connect(ui->mdiarea, &QMdiArea::subWindowActivated, this, &processflow_main::set_button_enabled);
+
+}
+
+void processflow_main::set_button_enabled()
+{
+    const bool has_canvas_view = (active_canvas_view() != nullptr);
+    ui->process_ribbon->set_enabled(has_canvas_view);
 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QGraphicsTextItem>
 #include <memory>
 #include <item/item.h>
@@ -10,11 +10,12 @@ public:
     static std::unique_ptr<raw_material> make (QPointF point);
     static std::unique_ptr<raw_material> make (json data, QPointF pos, item* parent);
 protected:
-    raw_material (QPointF point);
+//    raw_material (QPointF point);
     raw_material (json data, QPointF pos, item* parent = nullptr);
     bool init ();
     void paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     QRectF boundingRect() const override;
+//    QVariant itemChange (GraphicsItemChange change, const QVariant &value) override;
 private:
     void up_date();
 private:

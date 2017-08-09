@@ -13,14 +13,16 @@ draw_graph::draw_graph(QWidget *parent)
     auto button_checkout = new ribbon_tool(this);
     auto button_finished_product = new ribbon_tool(this);
 
+    // vector<ribbon_tool>
+    const QSize size = QSize(32, 32);
     button_raw_material->setIcon(QIcon("png/原材料.png"));
-    button_raw_material->setIconSize(QSize(50, 30));
+    button_raw_material->setIconSize(size);
     button_machining->setIcon(QIcon("png/加工.png"));
-    button_machining->setIconSize(QSize(50, 30));
+    button_machining->setIconSize(size);
     button_checkout->setIcon(QIcon("png/检验.png"));
-    button_checkout->setIconSize(QSize(50, 30));
+    button_checkout->setIconSize(size);
     button_finished_product->setIcon(QIcon("png/产成品.png"));
-    button_finished_product->setIconSize(QSize(50, 30));
+    button_finished_product->setIconSize(size);
 
     button_raw_material->setToolTip("原材料");
     button_machining->setToolTip("加工");
@@ -48,6 +50,13 @@ draw_graph::draw_graph(QWidget *parent)
     connect(button_machining, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
     connect(button_checkout, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
     connect(button_finished_product, &ribbon_tool::clicked, this, &draw_graph::on_button_pressed);
+
+    connect(this, &draw_graph::set_enabled, button_raw_material, &ribbon_tool::setEnabled);
+    connect(this, &draw_graph::set_enabled, button_machining, &ribbon_tool::setEnabled);
+    connect(this, &draw_graph::set_enabled, button_checkout, &ribbon_tool::setEnabled);
+    connect(this, &draw_graph::set_enabled, button_finished_product, &ribbon_tool::setEnabled);
+
+    connect(this, &draw_graph::graph_clicked, [this] (const QString & s) { status_ = s; });
 
     QHBoxLayout* layout = new QHBoxLayout;
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QGraphicsTextItem>
 #include <QFont>
 #include <memory>
@@ -8,10 +8,10 @@ using std::unique_ptr;
 class finished_product : public item
 {
 public:
-    static unique_ptr<finished_product> make (QPointF point);
+//    static unique_ptr<finished_product> make (QPointF point);
     static unique_ptr<finished_product> make (json data, QPointF pos, item* parent);
 protected:
-    finished_product(QPointF point);
+//    finished_product(QPointF point);
     finished_product(json data, QPointF pos, item* parent = nullptr);
     bool init();
     void paint (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;

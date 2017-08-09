@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "item/item.h"
 #include <QFont>
 
@@ -6,6 +6,7 @@ class machining : public item
 {
 public:
     static unique_ptr<machining> make (json data, QPointF pos, item* parent, QColor color = Qt::black);
+//    machining* copy();
 protected:
     machining(json data, QPointF pos, item* parent = nullptr);
     bool init();

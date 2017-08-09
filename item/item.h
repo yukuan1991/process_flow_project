@@ -31,25 +31,19 @@ public:
     static unique_ptr<item> make (json full_data, item*parent = nullptr);
     static json dump_scene (QGraphicsScene* scene);
     const json & dump () { return item_info_; }
-//    void set_item_data (json data) { item_info_ = std::move (data); }
     void set_item_type (const std::string & type);
     void set_attribute(string_view key, string value = {});
     const json& attribute_data () { return item_info_ ["attribute"]; }
 
     QRectF boundingRect () const override;
     void paint (QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
-//    const auto & attribute_data () { return attribute_data_; }
-//    void set_attribute (const std::string& key, std::string value);
+//    item* copy();
 protected:
     explicit item(json data, QPointF pos, item* parent);
-    explicit item(QGraphicsItem *parent = nullptr);
-//    void add_attribute (std::string attr);
     void add_attribute (const std::string& key);
     void add_detail (const std::string & key, json data);
-//    std::string * find_attribute (const std::string& key);
     optional<std::string> find_attribute (const std::string& key) const;
 protected:
-
     qreal item_width_ = 100;
     qreal item_height_ = item_width_ * 0.8;
     static constexpr qreal narrow_object_ratio_ = 1.2;
@@ -58,6 +52,5 @@ protected:
     const QColor &  selected_color () { return  selected_color_ ; }
 private:
     const QColor selected_color_ = Qt::red;
-//    std::vector<std::pair<std::string, std::string>> attribute_data_;
     json item_info_;
 };

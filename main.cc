@@ -4,9 +4,7 @@
 #include <variant>
 #include <memory>
 #include <QFile>
-#include <base/io/file/file.hpp>
 #include <QComboBox>
-//#include <boost/filesystem.hpp>
 #include <boost/range/adaptors.hpp>
 #include <QPixmap>
 #include <QStyle>
@@ -15,40 +13,38 @@
 #include <QWidget>
 #include <QMdiSubWindow>
 #include <base/io/file/file.hpp>
+#include <boost/filesystem.hpp>
+#include <QStyleFactory>
 
 
-//void set_style ()
-//{
-//    using namespace boost::filesystem;
+void set_style ()
+{
+    using namespace boost::filesystem;
 
-//    auto rng = boost::make_iterator_range (directory_iterator ("."), directory_iterator ());
+    auto rng = boost::make_iterator_range (directory_iterator ("."), directory_iterator ());
 
-//    std::string qss;
-//    for (auto & it : rng)
-//    {
-//        if (it.path ().extension ().string () == ".css")
-//        {
-//            auto res = file::read_all (it.path ().string ().data ());
-//            if (res)
-//            {
-//                qss += res.value ();
-//            }
-//        }
-//    }
+    std::string qss;
+    for (auto & it : rng)
+    {
+        if (it.path ().extension ().string () == ".css")
+        {
+            auto res = file::read_all (it.path ().string ().data ());
+            if (res)
+            {
+                qss += res.value ();
+            }
+        }
+    }
+    qApp->setStyle (QStyleFactory::create ("fusion"));
 
-//    qApp->setStyleSheet (QString::fromStdString (qss));
-//}
+    qApp->setStyleSheet (QString::fromStdString (qss));
+    qApp->setFont (QFont ("宋体", 11));
+}
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    QFile qssfile("style.qss");
-    qssfile.open(QFile::ReadOnly);
-    QString qss;
-    qss = qssfile.readAll();
-    qApp->setStyleSheet(qss);
-
+    set_style();
     processflow_main w;
     w.resize(1366, 768);
     w.show();

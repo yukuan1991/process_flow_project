@@ -28,19 +28,8 @@ class canvas_body : public QGraphicsView
 signals:
     void selection_changed (QGraphicsItem*);
 public:
-    static unique_ptr<canvas_body> make (QWidget *parent = nullptr) { return make_helper (parent); }
-    static unique_ptr<canvas_body> make (QGraphicsScene *scene, QWidget *parent = nullptr)
-    { return make_helper (scene, parent); }
-    ~canvas_body ();
-protected:
-    bool init();
-
-    canvas_body(QWidget *parent = Q_NULLPTR): QGraphicsView (parent) { }
-    canvas_body(QGraphicsScene *scene, QWidget *parent) : QGraphicsView (scene, parent) { }
-    void on_selection_changed ();
-private:
     template<typename ... ARGS>
-    static unique_ptr<canvas_body> make_helper (ARGS && ... args)
+    static unique_ptr<canvas_body> make (ARGS && ... args)
     {
         unique_ptr<canvas_body> ret (new canvas_body (std::forward<ARGS> (args)...));
         if (ret == nullptr or ret->init() == false)
@@ -49,6 +38,14 @@ private:
         }
         return ret;
     }
+
+    virtual ~canvas_body ();
+protected:
+    bool init();
+
+    canvas_body(QWidget *parent = Q_NULLPTR): QGraphicsView (parent) { }
+    canvas_body(QGraphicsScene *scene, QWidget *parent) : QGraphicsView (scene, parent) { }
+    void on_selection_changed ();
 protected:
     unique_ptr<canvas_scene> scene_ = canvas_scene::make (QRectF{0, 0, 1500, 1200});
     scoped_connection selection_conn_ = connect (scene_.get (), &canvas_scene::selectionChanged,

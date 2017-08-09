@@ -9,16 +9,14 @@
 #include "item/broken_line.h"
 #include "item/straight_line.h"
 #include <QGraphicsScene>
+#include <QCursor>
+#include <QApplication>
 
 using std::find_if;
 using std::string;
 using std::begin;
 using std::end;
 
-item::item(QGraphicsItem *parent) : QGraphicsObject (parent)
-{
-    setFlags (ItemIsSelectable | ItemIsMovable);
-}
 
 void item::add_attribute(const std::string & key)
 {
@@ -78,6 +76,14 @@ catch (const std::exception &)
     return {};
 }
 
+//bool sceneEvent(QEvent *event)
+//{
+//    if(event->type() == )
+//    QCursor cursor;
+//    cursor.setShape(Qt::CrossCursor);
+//    QApplication::setOverrideCursor(cursor);
+//}
+
 QPolygonF item::get_line_polygon(QLineF l, qreal width)
 {
 
@@ -97,36 +103,7 @@ QPolygonF item::get_line_polygon(QLineF l, qreal width)
 
 }
 
-//void item::add_attribute(std::string attr)
-//{
-//    auto found = find_if (begin (attribute_data_), end (attribute_data_), [&] (auto && it)
-//    {
-//        return it.first == attr;
-//    });
 
-//    if (found == end (attribute_data_))
-//    {
-//        attribute_data_.emplace_back (std::move (attr), string{});
-//    }
-//}
-
-//string * item::find_attribute(const string &key)
-//{
-//    auto found = find_if (begin (attribute_data_), end (attribute_data_), [&] (auto && it)
-//    {
-//        return it.first == key;
-//    });
-
-//    if (found == end (attribute_data_))
-//    {
-//        return nullptr;
-//    }
-//    else
-//    {
-//        return & (found->second);
-//    }
-
-//}
 
 void item::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -135,27 +112,21 @@ void item::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setPen(Qt::black);
 }
 
-//void item::set_attribute(const string &key, string value)
+//item* item::copy()
 //{
-//    auto found = find_if (begin (attribute_data_), end (attribute_data_), [&] (auto && it)
-//    {
-//        return it.first == key;
-//    });
-
-//    if (found == end (attribute_data_))
-//    {
-//        attribute_data_.emplace_back (key, value);
-//    }
-//    else
-//    {
-//        found->second = std::move (value);
-//    }
+//    auto cp_item = new item;
+//    cp_item->item_info_ = item_info_;
+//    return cp_item;
 //}
+
+
 
 item::item(nlohmann::json data, QPointF pos, item *parent)
     :QGraphicsObject (parent)
 {
     setFlags (ItemIsSelectable | ItemIsMovable);
+    setAcceptHoverEvents(true);
+//    setCursor (Qt::SizeAllCursor);
     item_info_ = std::move(data);
     setPos(pos);
 }
@@ -173,41 +144,35 @@ unique_ptr<item> item::make(nlohmann::json full_data, item *parent) try
     if (type == "加工")
     {
         return machining::make(std::move(data), pos, parent);
-        return nullptr;
 
     }
     if (type == "检验")
     {
         return checkout::make(std::move(data), pos, parent);
-        return nullptr;
 
     }
 
     if (type == "原材料")
     {
         return raw_material::make(std::move(data), pos, parent);
-        return nullptr;
 
     }
 
     if (type == "产成品")
     {
         return finished_product::make(std::move(data), pos, parent);
-        return nullptr;
 
     }
 
     if (type == "直线")
     {
         return straight_line::make(std::move(data), pos, parent);
-        return nullptr;
 
     }
 
     if (type == "折线")
     {
         return broken_line::make(std::move(data), pos, parent);
-        return nullptr;
 
     }
     return nullptr;

@@ -28,7 +28,7 @@ public:
 signals:
     void selection_changed (bool);
 private:
-    void nitification_canvas_select ();
+    void notification_canvas_select ();
 //protected:
 
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 #include <QVector>
 #include <QPointF>
@@ -13,7 +13,7 @@ public:
     void paint (QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
     QPainterPath shape () const override;
 private:
-    broken_line (QVector<QPointF> points);
+//    broken_line (QVector<QPointF> points);
     broken_line (json data, QPointF pos, item* parent = nullptr);
     bool init ();
     QVector<QPointF> points_;

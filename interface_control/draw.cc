@@ -3,7 +3,7 @@
 draw::draw(QWidget *parent)
     : QFrame(parent)
 {
-    setFrameShape(QFrame::Box);
+    setFrameShape(QFrame::StyledPanel);
     setFrameShadow(QFrame::Raised);
 }
 
@@ -11,9 +11,12 @@ void draw::reset_status()
 {
     for (auto it : buttons_)
     {
-        it->setChecked(false);
+        if(it->isChecked())
+        {
+            it->setChecked(false);
+            emit graph_clicked({});
+        }
     }
-    emit graph_clicked("");
 }
 
 
@@ -42,9 +45,5 @@ void draw::on_button_pressed()
             }
         }
         emit graph_clicked(name);
-    }
-    else
-    {
-        emit graph_clicked("");
     }
 }

@@ -7,9 +7,15 @@
 #include <QGraphicsItem>
 #include "canvas_body.h"
 #include <QPrinter>
+#include <QDebug>
+#include "json.hpp"
 
 using std::make_unique;
 using std::unique_ptr;
+using nlohmann::json;
+
+class item;
+class QMenu;
 
 class canvas_view : public canvas_body
 {
@@ -26,15 +32,16 @@ public:
         BROKENLINE
     };
 signals:
-    void scale_changed (qreal);
     void type_changed (canvas_view::draw_type);
     void draw_finished ();
+
+    /// 画布上item有变化的信号
     void scene_item_changed();
     void view_closed();
+
+    ///画布内容已保存信号
     void saved ();
 public:
-//    void set_unsaved_content_state();
-//    void send_scene_changed_signals();
     std::string dump();
     QString attached_file () { return windowTitle (); }
     void set_attached_file (QString attached_file) { setWindowTitle(attached_file); }
@@ -47,7 +54,13 @@ public:
     draw_type return_type ();
     void set_type_string (const QString & type);
     void set_type (draw_type t);
-
+public:
+    void right_button_menu(QMouseEvent* event);
+    void on_cut();
+    void on_copy();
+    void on_paste();
+    void select_allitems();
+    void delete_selected ();
 public:
     template<typename ... ARGS>
     static unique_ptr<canvas_view> make (ARGS && ... args)
@@ -64,7 +77,7 @@ public:
 protected:
     bool init();
 
-    canvas_view(QWidget *parent = Q_NULLPTR): canvas_body (parent) { }
+    canvas_view(QWidget *parent = nullptr): canvas_body (parent) { }
     canvas_view(QGraphicsScene *scene, QWidget *parent) : canvas_body (scene, parent) { }
 
     void keyPressEvent (QKeyEvent* event) override;
@@ -73,12 +86,7 @@ protected:
     void mouseMoveEvent (QMouseEvent* event) override;
     void mouseReleaseEvent (QMouseEvent* event) override;
 
-//    void dragEnterEvent(QDragEnterEvent * event) override;
-//    void dragMoveEvent (QDragMoveEvent * event) override;
-//    void dropEvent (QDropEvent * event) override;
-//    void wheelEvent (QWheelEvent* event) override;
-
-//    void closeEvent (QCloseEvent * event) override;
+//    void contextMenuEvent(QContextMenuEvent* event) override;
 private:
     void machining_press_event (QMouseEvent* event);
     void machining_release_event (QMouseEvent* event);
@@ -99,10 +107,6 @@ private:
     void brokenline_press_event (QMouseEvent* event);
     void brokenline_move_event (QMouseEvent* event);
     void brokenline_release_event (QMouseEvent* event);
-private:
-    void select_allitems();
-    void delete_selected ();
-    void drop_action (QDropEvent* event);
 
 private:
     canvas_view::draw_type type_ = canvas_view::draw_type::NONE;
@@ -112,7 +116,9 @@ private:
     unique_ptr<QGraphicsLineItem>  straight_line_item_ = nullptr;
     std::vector<unique_ptr<QGraphicsLineItem>> broken_lines_;
 
-    std::vector<QGraphicsItem*> graphics_;
+    int paste_time;
+
+//    std::vector<QGraphicsItem*> graphics_;
 
     bool unsaved_content_ = false;
 };

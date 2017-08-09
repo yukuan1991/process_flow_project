@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG -= c++11
 QMAKE_CXXFLAGS += -std=c++1z
 
+RC_ICONS = png/myappico.ico
+
 TARGET = process_flow_project
 TEMPLATE = app
 
@@ -43,7 +45,8 @@ SOURCES += main.cc\
     interface_control/attribute.cc \
     interface_control/draw.cc \
     interface_control/draw_graph.cc \
-    interface_control/draw_line.cc
+    interface_control/draw_line.cc \
+
 
 HEADERS  += \
     interface_control/ribbon.h \
@@ -51,8 +54,11 @@ HEADERS  += \
     interface_control/canvas_scene.h \
     interface_control/canvas_body.h \
     interface_control/canvas_view.h \
+<<<<<<< HEAD
 
     interface_control/ribbon.h \
+=======
+>>>>>>> ribbon
     interface_control/about_us_dlg.h \
     item/raw_material.h \
     item/item.h \
@@ -65,7 +71,7 @@ HEADERS  += \
     interface_control/draw.h \
     interface_control/ribbon_tool.hpp \
     interface_control/draw_graph.h \
-    interface_control/draw_line.h
+    interface_control/draw_line.h \
 
     interface_control/ribbon_graph.h \
     interface_control/about_us_dlg.h
@@ -78,3 +84,5 @@ DISTFILES +=
 
 LIBS += -lboost_locale
 LIBS += -liconv
+LIBS += -lboost_filesystem
+LIBS += -lboost_system

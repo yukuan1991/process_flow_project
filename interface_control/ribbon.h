@@ -26,28 +26,40 @@ signals:
     void save_as ();
     void quit ();
 
+    void cut();
+    void copy();
+    void paste();
+    void delete_selected();
+    void selected_all();
+
     void zoom_in_active();
     void zoom_out_active();
 
     void help();
 
     void graph_clicked(const QString &);
+
+    void set_enabled(bool);
 public:
     ribbon (QWidget * parent = nullptr);
 
+    ///绘图中的buttons的状态
+    QString status();
     ///将绘图中的buttons复位
     void reset_status();
     ///将指定的draw类中的buttons复位
-    void reset_buttons(draw*);
+    void reset_buttons(draw*);    
 private:
     static std::unique_ptr<QToolButton> make_button (const QPixmap & icon, const QString & text);
     void setup_ui ();
     void setup_menu ();
     std::unique_ptr<QWidget> ui_edit ();
+    std::unique_ptr<QWidget> ui_draw ();
     std::unique_ptr<QWidget> ui_window ();
     std::unique_ptr<QWidget> ui_help ();
     std::unique_ptr<draw_graph> graph_;
     std::unique_ptr<draw_line> line_;
+    bool button_enabled_;
 
 };
 
@@ -56,7 +68,7 @@ class ribbon_button : public QPushButton
     Q_OBJECT
 public:
     template<typename ... Args>
-    ribbon_button (Args && ... p) : QPushButton(std::forward<Args> (p)...) {}
+    ribbon_button (Args && ... p) : QPushButton(std::forward<Args> (p)...) {  }
 };
 
 class ribbon_menu : public QMenu
@@ -87,7 +99,7 @@ public:
         label_icon->setPixmap(pix);
 
         QLabel* label_text = new QLabel(text,this);
-        label_text->setAlignment (Qt::AlignCenter);
+        label_text->setAlignment (Qt::AlignVCenter);
 
         QHBoxLayout* layout = new QHBoxLayout;
         layout->setContentsMargins(1, 1, 1, 1);
