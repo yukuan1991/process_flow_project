@@ -824,5 +824,5 @@ void canvas_view::on_paste()
 
 canvas_view::~canvas_view()
 {
-
+    qDebug() << "~canvas_view()";
 }

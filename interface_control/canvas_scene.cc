@@ -1,5 +1,6 @@
 ﻿#include "canvas_scene.h"
 #include <QPainter>
+#include <QDebug>
 
 bool canvas_scene::init()
 {
@@ -30,7 +31,7 @@ void canvas_scene::drawBackground(QPainter *painter, const QRectF &rect)
 
 canvas_scene::~canvas_scene()
 {
-
+    qDebug() << "~canvas_scene()";
 }
 
 void canvas_scene::notification_canvas_select()
