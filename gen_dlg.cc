@@ -13,7 +13,6 @@ gen_dlg::gen_dlg(QWidget *parent)
     ui->setupUi(this);
     ui->view->setModel (model_.get ());
 
-
     ui->edit_row->setValidator (new QIntValidator (0, 99999, ui->edit_row));
     ui->view->setItemDelegate (delegate_.get ());
 
@@ -33,7 +32,12 @@ gen_dlg::~gen_dlg()
     delete ui;
 }
 
-QVariantMap gen_dlg::dump() const
+QVariantList gen_dlg::dump() const
 {
     return model_->dump ();
+}
+
+void gen_dlg::load(const QVariantList &data)
+{
+    model_->load (data);
 }

@@ -49,7 +49,8 @@ SOURCES += main.cc\
     gen_view.cc \
     gen_model.cc \
     gen_dlg.cc \
-    gen_delegate.cc
+    gen_delegate.cc \
+    item/conn_line.cc
 
 
 HEADERS  += \
@@ -75,7 +76,8 @@ HEADERS  += \
     gen_view.h \
     gen_model.h \
     gen_dlg.h \
-    gen_delegate.h
+    gen_delegate.h \
+    item/conn_line.h
 
 
 FORMS    += \

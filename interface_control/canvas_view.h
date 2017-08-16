@@ -9,6 +9,7 @@
 #include <QPrinter>
 #include <QDebug>
 #include "json.hpp"
+#include "gen_dlg.h"
 
 using std::make_unique;
 using std::unique_ptr;
@@ -16,6 +17,7 @@ using nlohmann::json;
 
 class item;
 class QMenu;
+
 
 class canvas_view : public canvas_body
 {
@@ -47,7 +49,8 @@ public:
     void set_attached_file (QString attached_file) { setWindowTitle(attached_file); }
     bool load (const std::string& data);
     bool is_unsaved () { return unsaved_content_; }
-    void generate_chart (const QVariantMap &data);
+    void generate_chart (const QVariantList &data);
+    gen_dlg * dlg () { return &dlg_; }
 public:
     void print_render (QPrinter* printer);
     void scale_object (qreal factor);
@@ -87,7 +90,6 @@ protected:
     void mouseMoveEvent (QMouseEvent* event) override;
     void mouseReleaseEvent (QMouseEvent* event) override;
 
-//    void contextMenuEvent(QContextMenuEvent* event) override;
 private:
     void machining_press_event (QMouseEvent* event);
     void machining_release_event (QMouseEvent* event);
@@ -108,6 +110,10 @@ private:
     void brokenline_press_event (QMouseEvent* event);
     void brokenline_move_event (QMouseEvent* event);
     void brokenline_release_event (QMouseEvent* event);
+private:
+    static std::map<int, std::vector<int>> take_structure(const QVariantList & list);
+    static unique_ptr<item> make_item(const QString & name, QPointF pos, const QString &type);
+    static int rank(const std::map<int, std::vector<int>> & data, int number);
 
 private:
     canvas_view::draw_type type_ = canvas_view::draw_type::NONE;
@@ -118,8 +124,7 @@ private:
     std::vector<unique_ptr<QGraphicsLineItem>> broken_lines_;
 
     int paste_time;
-
-//    std::vector<QGraphicsItem*> graphics_;
+    gen_dlg dlg_;
 
     bool unsaved_content_ = false;
 };

@@ -153,22 +153,22 @@ void processflow_main::print_order()
     }
 }
 
-void processflow_main::generate_chart()
+void processflow_main::generate_chart ()
 {
     var view = active_canvas_view();
     if (view == null)
     {
         return;
     }
+    var dlg = view->dlg ();
 
-    gen_dlg dlg;
-    val res = dlg.exec ();
+    val res = dlg->exec ();
     if (res != QDialog::Accepted)
     {
         return;
     }
 
-    view->generate_chart (dlg.dump ());
+    view->generate_chart (dlg->dump ());
 }
 
 void processflow_main::cut()

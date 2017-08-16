@@ -5,6 +5,8 @@
 using std::unique_ptr;
 using std::make_unique;
 
+class QTableWidget;
+
 class canvas_scene : public QGraphicsScene
 {
     Q_OBJECT
@@ -24,7 +26,8 @@ public:
     virtual ~canvas_scene();
     template<typename ... ARGS>
     canvas_scene (ARGS && ... args) : QGraphicsScene (std::forward<ARGS> (args)...) {}
-
+    void setup_chart ();
+    void setup_table (QTableWidget * table);
 signals:
     void selection_changed (bool);
 private:
@@ -39,6 +42,7 @@ private:
 private:
     qreal height_ = 1000;
     qreal width_ = 1000 * 1.4142135;
+    QGraphicsProxyWidget * table_ = nullptr;
     QRectF effective_rect_;
 };
 

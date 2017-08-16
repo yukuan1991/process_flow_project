@@ -22,7 +22,7 @@ QWidget *gen_delegate::createEditor (QWidget *parent, const QStyleOptionViewItem
     const auto model = index.model ();
     const auto header = model->headerData (index.column (), Qt::Horizontal, Qt::DisplayRole).toString ();
 
-    if (header == "名称" or header == "后续操作序列号")
+    if (header == "名称" or header == "前置操作序列号")
     {
         return new QLineEdit (parent);
     }
@@ -39,7 +39,7 @@ void gen_delegate::setEditorData(QWidget *editor, const QModelIndex &index) cons
     const auto model = index.model ();
     const auto header = model->headerData (index.column (), Qt::Horizontal, Qt::DisplayRole).toString ();
 
-    if (header == "名称" or header == "后续操作序列号")
+    if (header == "名称" or header == "前置操作序列号")
     {
         auto line_editor = dynamic_cast<QLineEdit*> (editor); assert (line_editor);
         line_editor->setText (index.data (Qt::DisplayRole).toString ());
@@ -48,7 +48,7 @@ void gen_delegate::setEditorData(QWidget *editor, const QModelIndex &index) cons
     {
         auto combo = dynamic_cast<QComboBox*> (editor); assert (combo);
         QStringList items;
-        items << "原材料" << "加工" << "检验" << "加工检验" << "产成品";
+        items << "原材料" << "加工" << "检验" << "产成品";
         combo->addItems (items);
         combo->setCurrentText (index.data (Qt::DisplayRole).toString ());
     }
@@ -58,7 +58,7 @@ void gen_delegate::setModelData(QWidget *editor, QAbstractItemModel *model, cons
 {
     const auto header = model->headerData (index.column (), Qt::Horizontal, Qt::DisplayRole).toString ();
 
-    if (header == "名称" or header == "后续操作序列号")
+    if (header == "名称" or header == "前置操作序列号")
     {
         const auto line_editor = dynamic_cast<QLineEdit*> (editor); assert (line_editor);
         model->setData (index, line_editor->text (), Qt::EditRole);

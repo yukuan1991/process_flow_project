@@ -4,7 +4,6 @@
 
 canvas_body::~canvas_body()
 {
-    qDebug() << "~canvas_body";
 }
 
 bool canvas_body::init()

@@ -15,10 +15,10 @@ public:
     void set_row (int row);
     Qt::ItemFlags flags (const QModelIndex & index) const override;
 
-    QVariantMap dump () const;
+    QVariantList dump () const;
+    void load (const QVariantList & data);
 private:
     QStringList headers_;
-    mutable QVariantMap data_;
-    int rows_ = 0;
+    mutable QVariantList data_;
 };
 

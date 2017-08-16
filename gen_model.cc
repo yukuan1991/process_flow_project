@@ -5,7 +5,7 @@
 gen_model::gen_model(QObject *parent)
     :QAbstractTableModel (parent)
 {
-    headers_ << "名称" << "类型" << "后续操作序列号";
+    headers_ << "名称" << "类型" << "前置操作序列号";
 }
 
 QVariant gen_model::headerData(int section, Qt::Orientation orientation, int role) const
@@ -34,22 +34,19 @@ QVariant gen_model::data(const QModelIndex &index, int role) const
         return {};
     }
 
-    const auto header = headerData (index.column (), Qt::Horizontal, Qt::DisplayRole).toString ();
-    const auto list = data_ [header].toList ();
+    if (index.row () >= rowCount () or index.column () >= columnCount ())
+    {
+        return {};
+    }
+
     if (role != Qt::DisplayRole)
     {
         return {};
     }
 
-    if (list.empty ())
-    {
-        return {};
-    }
+    const auto header = headerData (index.column (), Qt::Horizontal, Qt::DisplayRole).toString ();
 
-    assert (list.size () == rowCount ());
-    assert (index.row () < rowCount ());
-
-    return list.at (index.row ());
+    return data_.at (index.row ()).toMap () [header];
 }
 
 bool gen_model::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -59,23 +56,15 @@ bool gen_model::setData(const QModelIndex &index, const QVariant &value, int rol
         return {};
     }
 
-    const auto header = headerData (index.column (), Qt::Horizontal, Qt::DisplayRole).toString ();
-    auto list = data_ [header].toList ();
     if (role != Qt::EditRole)
     {
         return false;
     }
+    const auto header = headerData (index.column (), Qt::Horizontal, Qt::DisplayRole).toString ();
 
-    if (list.empty ())
-    {
-        return false;
-    }
-
-    assert (list.size () == rowCount ());
-    assert (index.row () < rowCount () and index.row () >= 0);
-
-    list[index.row ()] = value;
-    data_ [header] = list;
+    auto map = data_.at (index.row ()).toMap ();
+    map [header] = value;
+    data_[index.row ()] = map;
 
     emit dataChanged (index, index);
 
@@ -91,21 +80,17 @@ int gen_model::columnCount(const QModelIndex & parent) const
 int gen_model::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED (parent);
-    return rows_;
+    return data_.size ();
 }
 
 void gen_model::set_row(int row)
 {
     beginResetModel ();
     SCOPE_EXIT { endResetModel (); };
-    SCOPE_EXIT { rows_ = row; };
 
-    for (auto it : headers_)
-    {
-        auto vec = data_ [it].toList ().toVector ();
-        vec.resize (row);
-        data_ [it] = QVariantList::fromVector (vec);
-    }
+    auto vec = data_.toVector ();
+    vec.resize (row);
+    data_ = QVariantList::fromVector (vec);
 }
 
 Qt::ItemFlags gen_model::flags (const QModelIndex &index) const
@@ -113,7 +98,15 @@ Qt::ItemFlags gen_model::flags (const QModelIndex &index) const
     return QAbstractTableModel::flags (index) | Qt::ItemIsEditable;
 }
 
-QVariantMap gen_model::dump() const
+QVariantList gen_model::dump() const
 {
     return data_;
+}
+
+void gen_model::load(const QVariantList &data)
+{
+    beginResetModel ();
+    SCOPE_EXIT { endResetModel (); };
+
+    data_ = data;
 }

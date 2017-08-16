@@ -7,16 +7,19 @@
 #include <QMenu>
 #include <QClipboard>
 #include <base/lang/scope.hpp>
+#include "item/conn_line.h"
 #include <QMessageBox>
 #include <QVariant>
 #include <QApplication>
 #include <boost/range/algorithm_ext/push_back.hpp>
 #include <boost/range/adaptor/filtered.hpp>
+#include <QJsonDocument>
 #include <boost/range/adaptor/indexed.hpp>
 
 using nlohmann::json;
 using namespace boost;
 using namespace boost::adaptors;
+using std::end;
 
 bool canvas_view::init()
 {
@@ -210,12 +213,10 @@ void canvas_view::machining_press_event(QMouseEvent *event)
             }
         }
     };
-//    auto rawmaterial = raw_material::make(begin_);
     auto machining = item::make(std::move(data));
     const auto rect_center = machining->boundingRect().center();
     auto center_pos = begin_ - rect_center;
     machining->setPos(center_pos);
-//    machining->setSelected(true);
     scene()->addItem(machining.get());
     connect(machining.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
     connect(machining.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
@@ -248,12 +249,10 @@ void canvas_view::checkout_press_event(QMouseEvent *event)
             }
         }
     };
-//    auto rawmaterial = raw_material::make(begin_);
     auto checkout = item::make(std::move(data));
     const auto rect_center = checkout->boundingRect().center();
     auto center_pos = begin_ - rect_center;
     checkout->setPos(center_pos);
-//    checkout->setSelected(true);
     scene()->addItem(checkout.get());
     connect(checkout.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
     connect(checkout.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
@@ -323,12 +322,11 @@ void canvas_view::rawmaterial_press_event(QMouseEvent *event)
             }
         }
     };
-//    auto rawmaterial = raw_material::make(begin_);
+
     auto rawmaterial = item::make(std::move(data));
     const auto rect_center = rawmaterial->boundingRect().center();
     auto center_pos = begin_ - rect_center;
     rawmaterial->setPos(center_pos);
-//    rawmaterial->setSelected(true);
     scene()->addItem(rawmaterial.get());
     connect(rawmaterial.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
     connect(rawmaterial.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
@@ -408,7 +406,6 @@ void canvas_view::straightline_release_event(QMouseEvent *event)
         new_pos = QPointF(current_pos.x(), begin_.y());
     }
 
-//    const auto pos = new_pos;
     const auto pos = new_pos - begin_;
 
     json data
@@ -579,154 +576,177 @@ void canvas_view::delete_selected()
 
 std::string canvas_view::dump()
 {
-    return item::dump_scene (scene()).dump (4);
+    return QJsonDocument::fromVariant (dlg ()->dump ()).toBinaryData ().toStdString ();
 }
 
 bool canvas_view::load(const std::string &data)
 {
-    auto content = nlohmann::json::parse (data);
+    const auto list_data = QJsonDocument::fromBinaryData (QByteArray::fromStdString (data)).toVariant ().toList ();
 
-    for (auto & it : content)
-    {
+    dlg ()->load (list_data);
+    generate_chart (list_data);
 
-        auto the_item = item::make (it);
-
-        connect(the_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
-        connect(the_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
-
-        scene()->addItem (the_item.release ());
-    }
     return true;
 }
 
-void canvas_view::generate_chart(const QVariantMap &data)
+std::map<int, std::vector<int>> canvas_view::take_structure(const QVariantList & list)
 {
-    const auto size = data ["名称"].toList ().size ();
+    std::map<int, std::vector<int>> structures;
 
-    QVariantList list;
-
-    for (int i = 0; i < size; i ++)
+    for (auto it : list | indexed ())
     {
-        auto map = QVariantMap ();
-        map ["名称"] = data ["名称"].toList ().at (i);
-        map ["类型"] = data ["类型"].toList ().at (i);
-        map ["后续操作序列号"] = data ["后续操作序列号"].toList ().at (i);
+        const auto current_number = it.index () + 1;
+        auto pre_text = it.value ().toMap () ["前置操作序列号"].toString ();
+        auto pre_actions_str = pre_text.split (",");
+        std::vector<int> int_pre_actions;
 
-        list.append (map);
-    }
-
-    std::vector<QVariant> v_material;
-
-    push_back (v_material, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "原材料"; }));
-    const auto material_list = QVector<QVariant>::fromStdVector (v_material).toList ();
-
-    std::vector<QVariant> v_product;
-    push_back (v_product, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "产成品"; }));
-    const auto product = QVector<QVariant>::fromStdVector (v_product).toList ();
-
-    std::vector<QVariant> v_processing;
-    push_back (v_processing, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "加工"; }));
-    const auto processing = QVector<QVariant>::fromStdVector (v_processing).toList ();
-
-    std::vector<QVariant> v_checking;
-    push_back (v_checking, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "加工"; }));
-    const auto checking = QVector<QVariant>::fromStdVector (v_checking).toList ();
-
-    for (auto it : material_list | indexed ())
-    {
-        const auto map = it.value ().toMap ();
-        json new_json
+        for (auto & it : pre_actions_str)
         {
+            bool ok = false;
+            auto int_pre_action = it.toInt (&ok);
+            if (ok)
             {
-                "pos",
+                if (int_pre_action == current_number)
                 {
-                    {"x", it.index () * 100 + 150},
-                    {"y", 150}
+                    return {};
                 }
-            },
-            {
-                "detail",
+                else
                 {
-                    {"type", "原材料"},
-                    {
-                        "attribute",
-                        {
-                            { {"名称", map ["名称"].toString ().toStdString () } },
-                            { { "规格", "" } },
-                        }
-                    }
+                    int_pre_actions.emplace_back (int_pre_action);
                 }
             }
-        };
+            else
+            {
+                continue;
+            }
+        }
 
-        auto new_item = item::make (::move (new_json));
-        connect (new_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
-        connect (new_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
-        scene ()->addItem (new_item.release ());
+        structures.emplace (current_number, std::move (int_pre_actions));
     }
 
+    return structures;
+}
 
-    for (auto it : processing | indexed ())
+unique_ptr<item> canvas_view::make_item(const QString &name, QPointF pos, const QString & type)
+{
+    json new_json
     {
-        const auto map = it.value ().toMap ();
-        json new_json
         {
+            "pos",
             {
-                "pos",
-                {
-                    {"x", it.index () * 100 + 150},
-                    {"y", 220}
-                }
-            },
+                {"x", pos.x ()},
+                {"y", pos.y ()}
+            }
+        },
+        {
+            "detail",
             {
-                "detail",
                 {
-                    {"type", "加工"},
-                    {
-                        "attribute",
-                        {
-                            { {"名称", map ["名称"].toString ().toStdString () } },
-                        }
-                    }
+                    "type", type.toStdString ()
+                },
+                {
+                    "attribute",
+                    { { {"名称", name.toStdString () } }, }
                 }
             }
-        };
-        auto new_item = item::make (::move (new_json));
-        connect (new_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
-        connect (new_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
-        scene ()->addItem (new_item.release ());
-    }
-    for (auto it : checking | indexed ())
+        }
+    };
+
+    return item::make (::move (new_json));
+}
+
+int canvas_view::rank(const std::map<int, std::vector<int>> & data, int number)
+{
+    auto it = data.find (number);
+    if (it == std::end (data))
     {
-        const auto map = it.value ().toMap ();
-        json new_json
-        {
-            {
-                "pos",
-                {
-                    {"x", it.index () * 100 + 150},
-                    {"y", 290}
-                }
-            },
-            {
-                "detail",
-                {
-                    {"type", "检验"},
-                    {
-                        "attribute",
-                        {
-                            { {"名称", map ["名称"].toString ().toStdString () } },
-                        }
-                    }
-                }
-            }
-        };
-        auto new_item = item::make (::move (new_json));
-        connect (new_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
-        connect (new_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
-        scene ()->addItem (new_item.release ());
+        return -1;
     }
 
+    if (it->second.empty ())
+    {
+        return 0;
+    }
+
+    auto max_path = 9999;
+    for (auto i : it->second)
+    {
+        if (i == number)
+        {
+            return 0;
+        }
+        auto ret = rank (data, i);
+        if (ret == -1)
+        {
+            return -1;
+        }
+
+        max_path = std::min (ret, max_path);
+
+        if (max_path > 500)
+        {
+            return -1;
+        }
+    }
+
+    return max_path + 1;
+}
+
+void canvas_view::generate_chart(const QVariantList &data)
+{
+    scene ()->clear ();
+    const auto structure = take_structure (data);
+
+    std::map<int, item*> item_map;
+    std::vector<std::vector<int>> chart (data.size ());
+
+    for (auto & it : structure)
+    {
+        auto item = make_item (data.at (it.first - 1).toMap ()["名称"].toString ()
+                , QPointF (0, 0)
+                , data.at (it.first - 1).toMap () ["类型"].toString ());
+
+        item_map.emplace (it.first, item.get ());
+        scene ()->addItem (item.release ());
+    }
+
+    for (auto & it : structure)
+    {
+        auto rank_value = rank (structure, it.first);
+        if (rank_value == -1)
+        {
+            QMessageBox::information (this, "错误", "输入参数非法");
+            return;
+        }
+
+        chart.at (static_cast<unsigned> (rank_value)).push_back (it.first);
+    }
+
+    for (unsigned i = 0; i < chart.size (); i ++)
+    {
+        for (unsigned j = 0; j < chart.at (i).size (); j ++)
+        {
+            auto p = item_map[chart.at (i).at (j)];
+            if (p == nullptr)
+            {
+                return;
+            }
+            p->setPos (j * 100 + 150, i * 100 + 150);
+            const auto offset = p->shape ().boundingRect ().center ();
+            p->moveBy (- offset.x (), - offset.y ());
+        }
+    }
+
+    for (auto & it : structure)
+    {
+        for (auto & i : it.second)
+        {
+            auto destination = item_map[i];
+            auto start = item_map[it.first];
+
+            scene ()->addItem (new conn_line (start, destination));
+        }
+    }
 }
 
 void canvas_view::print_render(QPrinter *printer)
@@ -741,7 +761,7 @@ void canvas_view::scale_object(qreal factor)
     const auto scale_facter = m.m11();
     const auto new_scale_factor = scale_facter * factor;
 
-    const auto final_scale_factor = new_scale_factor < 1 ? 1 : new_scale_factor;
+    const auto final_scale_factor = new_scale_factor < 0.5 ? 0.5 : new_scale_factor;
 
     auto m_after = QMatrix ();
     m_after.scale(final_scale_factor, final_scale_factor);

@@ -18,7 +18,8 @@ class gen_dlg : public QDialog
 public:
     explicit gen_dlg (QWidget *parent = null);
     ~gen_dlg () override;
-    QVariantMap dump () const;
+    QVariantList dump() const;
+    void load (const QVariantList & data);
 private:
     Ui::gen_dlg *ui;
     std::unique_ptr<gen_model>  model_;
