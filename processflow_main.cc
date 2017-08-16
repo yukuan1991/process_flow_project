@@ -11,6 +11,12 @@
 #include <base/utils/charset.hpp>
 #include <QCloseEvent>
 #include <QDebug>
+#include "gen_dlg.h"
+
+
+
+
+#include <base/lang/defines.hpp>
 
 processflow_main::processflow_main(QWidget *parent) :
     QWidget(parent),
@@ -28,56 +34,15 @@ processflow_main::~processflow_main()
     delete ui;
 }
 
-//void processflow_main::closeEvent(QCloseEvent *event)
-//{
-//    QWidget::closeEvent(event);
-//    const auto list = ui->mdiarea->subWindowList();
-
-//    for (auto & sub : list)
-//    {
-//        auto view = dynamic_cast<canvas_view*> (sub->widget());
-//        assert (view != nullptr);
-//        if (!view->is_unsaved ())
-//        {
-//            continue;
-//        }
-
-//        auto ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
-//                                        "保存","忽略","取消");
-//        constexpr auto save = 0;
-//        constexpr auto ignore = 1;
-//        constexpr auto cancel = 2;
-
-//        if (ret == save)
-//        {
-//            save_subwindow (sub);
-//            ui->mdiarea->removeSubWindow(sub);
-//            sub->deleteLater ();
-//        }
-//        else if (ret == ignore)
-//        {
-//            ui->mdiarea->removeSubWindow(sub);
-//            sub->deleteLater ();
-//            continue;
-//        }
-//        else if (ret == cancel)
-//        {
-//            event->ignore ();
-//            return;
-//        }
-//    }
-//}
-
 void processflow_main::on_view_closed()
 {
-    int ret = 0;
-    ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
+    val ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
                           "保存","忽略","取消");
     if (ret == 2)
     {
         return;
     }
-    auto active_window = ui->mdiarea->activeSubWindow();
+    var active_window = ui->mdiarea->activeSubWindow();
 
     if (ret == 0)
     {
@@ -89,27 +54,26 @@ void processflow_main::on_view_closed()
 
 void processflow_main::file_new()
 {
-    auto canvas = create_canvas_body();
-
+    var canvas = create_canvas_body();
     canvas->show();
 }
 
 void processflow_main::file_open()
 {
-    auto file_name = QFileDialog::getOpenFileName(this, "打开文件", ".", "Images (*.pfs)");
+    var file_name = QFileDialog::getOpenFileName(this, "打开文件", ".", "Images (*.pfs)");
     if (file_name.isEmpty())
     {
         return;
     }
 
-    auto file_content = file::read_all(::utf_to_sys(file_name.toStdString()).data());
+    var file_content = file::read_all(::utf_to_sys(file_name.toStdString()).data());
     if (!file_content)
     {
         QMessageBox::information(this, "打开", "打开文件失败，请检查文件是否存在");
         return;
     }
 
-    auto canvas = create_canvas_body();
+    var canvas = create_canvas_body();
     if (!canvas->load (*file_content))
     {
         QMessageBox::information(this, "打开", "打开文件失败，文件已经损坏");
@@ -187,6 +151,24 @@ void processflow_main::print_order()
     {
         view->print_render(&printer);
     }
+}
+
+void processflow_main::generate_chart()
+{
+    var view = active_canvas_view();
+    if (view == null)
+    {
+        return;
+    }
+
+    gen_dlg dlg;
+    val res = dlg.exec ();
+    if (res != QDialog::Accepted)
+    {
+        return;
+    }
+
+    view->generate_chart (dlg.dump ());
 }
 
 void processflow_main::cut()
@@ -281,7 +263,6 @@ canvas_view *processflow_main::create_canvas_body()
     connect (ptr_canvas, &canvas_view::draw_finished, ui->process_ribbon, &ribbon::reset_status);
     connect (ptr_canvas, &canvas_view::selection_changed, this, &processflow_main::canvas_selection);
 
-//    connect (ptr_canvas, &canvas_view::view_closed, this, &processflow_main::on_view_closed, Qt::QueuedConnection);
     connect (this, &processflow_main::attribute_changed, ptr_canvas, &canvas_view::scene_item_changed);
 
     ///确保当前被按下的图形按钮，在新建画布的时候有效
@@ -396,8 +377,9 @@ void processflow_main::init_conn()
     connect (ui->process_ribbon, &ribbon::zoom_out_active, this, &processflow_main::zoom_out_active);
 
     connect (ui->process_ribbon, &ribbon::help, this, &processflow_main::help_advice);
+    connect (ui->process_ribbon, &ribbon::gen, this, &processflow_main::generate_chart);
 
-    connect(ui->mdiarea, &QMdiArea::subWindowActivated, this, &processflow_main::set_button_enabled);
+    connect (ui->mdiarea, &QMdiArea::subWindowActivated, this, &processflow_main::set_button_enabled);
 
 }
 

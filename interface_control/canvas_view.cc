@@ -6,12 +6,17 @@
 #include <QIcon>
 #include <QMenu>
 #include <QClipboard>
-#include <QDebug>
 #include <base/lang/scope.hpp>
 #include <QMessageBox>
+#include <QVariant>
 #include <QApplication>
+#include <boost/range/algorithm_ext/push_back.hpp>
+#include <boost/range/adaptor/filtered.hpp>
+#include <boost/range/adaptor/indexed.hpp>
 
 using nlohmann::json;
+using namespace boost;
+using namespace boost::adaptors;
 
 bool canvas_view::init()
 {
@@ -23,21 +28,12 @@ bool canvas_view::init()
     setViewportUpdateMode(FullViewportUpdate);
     setMouseTracking(true);
     setRenderHints (QPainter::Antialiasing);
-//    setDragMode(RubberBandDrag);
 
     connect (this, &canvas_view::type_changed, [this] (auto && )
     {
         straight_line_item_ = nullptr;
         broken_lines_.clear();
     });
-
-//    connect (this, &canvas_view::draw_finished, [this]
-//    {
-//        this->setCursor(Qt::ArrowCursor);
-//    });
-
-//    connect (this, &canvas_view::scene_item_changed,
-//             [] { static auto i = 0; qDebug () << "scene_item_changed" << ++i; });
 
     connect (this, &canvas_view::scene_item_changed, [this]{ unsaved_content_ = true; });
     connect (this, &canvas_view::saved, [this]{ unsaved_content_ = false; });
@@ -111,7 +107,7 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
             case canvas_view::draw_type::BROKENLINE:
                 brokenline_press_event(event);
                 break;
-            default:
+            case draw_type::NONE:
                 break;
             }
         }
@@ -120,21 +116,17 @@ void canvas_view::mousePressEvent(QMouseEvent *event)
 
 void canvas_view::mouseMoveEvent(QMouseEvent *event)
 {
-    SCOPE_EXIT { canvas_body::mouseMoveEvent(event); };
-    qDebug() << __PRETTY_FUNCTION__ << __LINE__;
+    SCOPE_EXIT { canvas_body::mouseMoveEvent (event); };
+
     if (return_type() != canvas_view::draw_type::NONE)
     {
         const auto scene_pos = mapToScene (event->pos());
-        qDebug() << __PRETTY_FUNCTION__ << __LINE__;
-        if (scene_->effective_rect().contains(scene_pos))
+        if (scene_->effective_rect ().contains(scene_pos))
         {
-            qDebug() << __PRETTY_FUNCTION__ << __LINE__;
             setCursor(Qt::CrossCursor);
-
         }
         else
         {
-//            setCursor(Qt::ArrowCursor);
             unsetCursor();
         }
 
@@ -152,11 +144,8 @@ void canvas_view::mouseMoveEvent(QMouseEvent *event)
     }
     else if (return_type() == canvas_view::draw_type::NONE)
     {
-        qDebug() << __PRETTY_FUNCTION__ << __LINE__;
-//        setCursor(Qt::ArrowCursor);
         unsetCursor();
         const auto scene_pos = mapToScene (event->pos());
-        qDebug() << __PRETTY_FUNCTION__ << __LINE__;
         if (scene_->effective_rect().contains(scene_pos))
         {
             canvas_body::mouseMoveEvent(event);
@@ -202,40 +191,6 @@ void canvas_view::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-//void canvas_view::contextMenuEvent(QContextMenuEvent *event)
-//{
-//    qDebug () << __PRETTY_FUNCTION__ << " " << __LINE__;
-//    SCOPE_EXIT { canvas_body::contextMenuEvent(event); };
-
-//    auto menu = std::make_unique<QMenu> ();
-
-//    auto action_cut = menu->addAction("剪切");
-//    auto action_copy = menu->addAction("复制");
-//    auto action_paste = menu->addAction("粘贴");
-
-//    connect(action_cut, &QAction::triggered, this, &canvas_view::on_cut);
-//    connect(action_copy, &QAction::triggered, this, &canvas_view::on_copy);
-//    connect(action_paste, &QAction::triggered, this, &canvas_view::on_paste);
-
-//    menu->exec(QCursor::pos());
-//    event->accept();
-
-//}
-
-//void canvas_view::closeEvent(QCloseEvent *event)
-//{
-//    const bool unsaved = unsaved_content_;
-
-//    if(unsaved)
-//    {
-//        emit view_closed();
-//        event->ignore ();
-//    }
-//    else
-//    {
-//        canvas_body::closeEvent(event);
-//    }
-//}
 
 void canvas_view::machining_press_event(QMouseEvent *event)
 {
@@ -477,7 +432,6 @@ void canvas_view::straightline_release_event(QMouseEvent *event)
     };
 
     auto straight = item::make(std::move (data));
-//    auto straight = straight_line::make(begin_, pos);
     straight->setSelected(true);
     scene()->addItem(straight.get());
 
@@ -641,9 +595,138 @@ bool canvas_view::load(const std::string &data)
         connect(the_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
 
         scene()->addItem (the_item.release ());
-
     }
     return true;
+}
+
+void canvas_view::generate_chart(const QVariantMap &data)
+{
+    const auto size = data ["名称"].toList ().size ();
+
+    QVariantList list;
+
+    for (int i = 0; i < size; i ++)
+    {
+        auto map = QVariantMap ();
+        map ["名称"] = data ["名称"].toList ().at (i);
+        map ["类型"] = data ["类型"].toList ().at (i);
+        map ["后续操作序列号"] = data ["后续操作序列号"].toList ().at (i);
+
+        list.append (map);
+    }
+
+    std::vector<QVariant> v_material;
+
+    push_back (v_material, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "原材料"; }));
+    const auto material_list = QVector<QVariant>::fromStdVector (v_material).toList ();
+
+    std::vector<QVariant> v_product;
+    push_back (v_product, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "产成品"; }));
+    const auto product = QVector<QVariant>::fromStdVector (v_product).toList ();
+
+    std::vector<QVariant> v_processing;
+    push_back (v_processing, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "加工"; }));
+    const auto processing = QVector<QVariant>::fromStdVector (v_processing).toList ();
+
+    std::vector<QVariant> v_checking;
+    push_back (v_checking, list | filtered ([] (auto && it) { return it.toMap ()["类型"].toString () == "加工"; }));
+    const auto checking = QVector<QVariant>::fromStdVector (v_checking).toList ();
+
+    for (auto it : material_list | indexed ())
+    {
+        const auto map = it.value ().toMap ();
+        json new_json
+        {
+            {
+                "pos",
+                {
+                    {"x", it.index () * 100 + 150},
+                    {"y", 150}
+                }
+            },
+            {
+                "detail",
+                {
+                    {"type", "原材料"},
+                    {
+                        "attribute",
+                        {
+                            { {"名称", map ["名称"].toString ().toStdString () } },
+                            { { "规格", "" } },
+                        }
+                    }
+                }
+            }
+        };
+
+        auto new_item = item::make (::move (new_json));
+        connect (new_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
+        connect (new_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
+        scene ()->addItem (new_item.release ());
+    }
+
+
+    for (auto it : processing | indexed ())
+    {
+        const auto map = it.value ().toMap ();
+        json new_json
+        {
+            {
+                "pos",
+                {
+                    {"x", it.index () * 100 + 150},
+                    {"y", 220}
+                }
+            },
+            {
+                "detail",
+                {
+                    {"type", "加工"},
+                    {
+                        "attribute",
+                        {
+                            { {"名称", map ["名称"].toString ().toStdString () } },
+                        }
+                    }
+                }
+            }
+        };
+        auto new_item = item::make (::move (new_json));
+        connect (new_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
+        connect (new_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
+        scene ()->addItem (new_item.release ());
+    }
+    for (auto it : checking | indexed ())
+    {
+        const auto map = it.value ().toMap ();
+        json new_json
+        {
+            {
+                "pos",
+                {
+                    {"x", it.index () * 100 + 150},
+                    {"y", 290}
+                }
+            },
+            {
+                "detail",
+                {
+                    {"type", "检验"},
+                    {
+                        "attribute",
+                        {
+                            { {"名称", map ["名称"].toString ().toStdString () } },
+                        }
+                    }
+                }
+            }
+        };
+        auto new_item = item::make (::move (new_json));
+        connect (new_item.get(), &item::xChanged, this, &canvas_view::scene_item_changed);
+        connect (new_item.get(), &item::yChanged, this, &canvas_view::scene_item_changed);
+        scene ()->addItem (new_item.release ());
+    }
+
 }
 
 void canvas_view::print_render(QPrinter *printer)
@@ -672,7 +755,6 @@ canvas_view::draw_type canvas_view::return_type()
 
 void canvas_view::set_type_string(const QString &type)
 {
-//    qDebug() << type;
     if (type == "产成品")
     {
         set_type(draw_type::FINISHEDPRODUCTED);
@@ -824,5 +906,4 @@ void canvas_view::on_paste()
 
 canvas_view::~canvas_view()
 {
-    qDebug() << "~canvas_view()";
 }

@@ -19,16 +19,6 @@ void canvas_scene::drawBackground(QPainter *painter, const QRectF &rect)
     painter->drawRect(effective_rect_);
 }
 
-//void canvas_scene::drawForeground(QPainter *painter, const QRectF &rect)
-//{
-//    QGraphicsScene::drawForeground(painter, rect);
-//    painter->setBrush(Qt::transparent);
-
-//    auto center_point = sceneRect().center();
-//    effective_rect_ = QRectF (center_point - QPointF (width_ / 2, height_ / 2), QSizeF (width_, height_));
-//    painter->drawRect(effective_rect_);
-//}
-
 canvas_scene::~canvas_scene()
 {
     qDebug() << "~canvas_scene()";

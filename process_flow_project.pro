@@ -46,6 +46,10 @@ SOURCES += main.cc\
     interface_control/draw.cc \
     interface_control/draw_graph.cc \
     interface_control/draw_line.cc \
+    gen_view.cc \
+    gen_model.cc \
+    gen_dlg.cc \
+    gen_delegate.cc
 
 
 HEADERS  += \
@@ -67,11 +71,16 @@ HEADERS  += \
     interface_control/ribbon_tool.hpp \
     interface_control/draw_graph.h \
     interface_control/draw_line.h \
-    interface_control/about_us_dlg.h
+    interface_control/about_us_dlg.h \
+    gen_view.h \
+    gen_model.h \
+    gen_dlg.h \
+    gen_delegate.h
 
 
 FORMS    += \
-    processflow_main.ui
+    processflow_main.ui \
+    gen_dlg.ui
 
 DISTFILES +=
 
@@ -79,3 +88,10 @@ LIBS += -lboost_locale
 LIBS += -liconv
 LIBS += -lboost_filesystem
 LIBS += -lboost_system
+
+QMAKE_CXXFLAGS += -Wextra
+QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+QMAKE_CXXFLAGS += -Werror=write-strings
+QMAKE_CXXFLAGS += -Werror=return-type
+QMAKE_CXXFLAGS += -Werror=parentheses
+QMAKE_CXXFLAGS += -Werror=maybe-uninitialized

@@ -14,29 +14,6 @@ unique_ptr<machining> machining::make(json data, QPointF pos, item* parent, QCol
     return ret;
 }
 
-//machining *machining::copy()
-//{
-//    json data
-//    {
-//        {"pos",
-//            {
-//                {"x", 10},
-//                {"y", 10}
-//            }
-//        },
-//        {"detail",
-//            {
-//                {"type", "加工"},
-//                {"attribute", ""}
-//            }
-//        }
-//    };
-//    auto pos = QPointF(10, 10);
-//    auto cp_item = new machining(data, pos);
-////    cp_item->item_info_ = dump();
-//    return cp_item;
-//}
-
 machining::machining(json data, QPointF pos, item *parent)
     :item(std::move (data), pos, parent)
 {
@@ -61,8 +38,6 @@ void machining::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 {
     item::paint(painter, option, widget);
 
-//    const auto & serial_number = machining_info_;
-
     const QColor color = option->state bitand QStyle::State_Selected ? selected_color() : Qt::black;
     painter->setFont(font_);
     auto the_pen = painter->pen();
@@ -77,10 +52,6 @@ void machining::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     const QRectF rect (0.3 * item_width_, item_height_ * 20 / 80, 0.5 * item_width_, item_height_ * 50 / 80);
     painter->drawEllipse(rect);
 
-//    if (serial_number.isEmpty())
-//    {
-//        return;
-    //    }
     auto serial_number = find_attribute("序号");
 
     if (serial_number != nullopt and !serial_number->empty())

@@ -7,18 +7,6 @@
 using namespace std;
 
 
-//std::unique_ptr<raw_material> raw_material::make(QPointF point)
-//{
-//    auto ret = std::unique_ptr<raw_material> ( new raw_material (point));
-
-//    if (ret == nullptr or !ret->init())
-//    {
-//        return nullptr;
-//    }
-
-//    return ret;
-//}
-
 std::unique_ptr<raw_material> raw_material::make(nlohmann::json data, QPointF pos, item *parent)
 {
     auto ret = std::unique_ptr<raw_material> ( new raw_material (std::move(data), pos, parent));
@@ -31,19 +19,6 @@ std::unique_ptr<raw_material> raw_material::make(nlohmann::json data, QPointF po
     return ret;
 }
 
-//raw_material::raw_material(QPointF point)
-//    :item ({}, {}, {})
-//{
-//    const QFontMetricsF metrics(font_);
-//    const auto height = metrics.height();
-//    bounding_rect_ = QRectF(0.07 * item_width_ - 2, item_height_ * 25 / 80 -2,
-//                             0.85 * item_width_ + 2, height * 2 + 2);
-
-//    const QPointF pos(point.x() - item_width_/2, point.y() - item_height_/2);
-//    setPos (pos);
-
-//    setSelected(true);
-//}
 
 raw_material::raw_material(nlohmann::json data, QPointF pos, item *parent)
     : item(std::move(data), pos, parent)
@@ -97,31 +72,6 @@ QRectF raw_material::boundingRect() const
 {
     return bounding_rect_;
 }
-
-//QVariant raw_material::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
-//{
-//    auto var = item::itemChange(change, value);
-//    if (change == ItemSelectedHasChanged)
-//    {
-//        const auto selected = value.toBool();
-//        if (selected == false)
-//        {
-//            const auto name_is_space = all_of (begin (name_), end (name_),
-//                    [] (auto && it ) { return it == ' ' or it == '\t'; });
-
-//            const auto spec_is_space = all_of (begin (specification_), end (specification_),
-//                    [] (auto && it ) { return it == ' ' or it == '\t'; });
-
-//            if (name_is_space and spec_is_space)
-//            {
-//                deleteLater();
-//            }
-//        }
-//    }
-
-//    return var;
-//}
-
 
 void raw_material::up_date()
 {

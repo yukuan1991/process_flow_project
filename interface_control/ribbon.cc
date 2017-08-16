@@ -27,18 +27,17 @@ ribbon::ribbon(QWidget *parent)
     graph_ = make_unique<draw_graph> (this);
     line_ = make_unique<draw_line> (this);
 
-//    connect(this, &ribbon::set_enabled, [this] (bool b){ qDebug() << b; });
     setup_ui();
 }
 
 QString ribbon::status()
 {
-    if(!graph_->status().isEmpty())
+    if(!graph_->status ().isEmpty())
     {
-        return graph_->status();
+        return graph_->status ();
     }
 
-    if(!line_->status().isEmpty())
+    if(!line_->status ().isEmpty())
     {
         return line_->status();
     }
@@ -89,10 +88,8 @@ void ribbon::setup_ui()
     this->addTab (ui_edit ().release (), "编辑");
     this->addTab (ui_draw ().release (), "绘图");
     this->addTab (ui_window ().release (), "窗口");
+    this->addTab (ui_gen ().release (), "生成");
     this->addTab (ui_help ().release (), "帮助");
-
-
-
 }
 
 unique_ptr<QWidgetAction> make_action (const QPixmap & pix, const QString & text, QWidget * parent = nullptr)
@@ -356,6 +353,48 @@ std::unique_ptr<QWidget> ribbon::ui_help()
 
     block1_layout->addLayout (upper_layout.release ());
     auto label = new QLabel ("联系我们");
+    label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
+    block1_layout->addWidget (label);
+    layout->addLayout (block1_layout.release (), 0);
+
+    auto line = new QFrame(widget.get ());
+    line->setFrameShape(QFrame::VLine);
+    line->setFrameShadow(QFrame::Sunken);
+    layout->addWidget (line);
+
+    layout->addItem (new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
+    widget->setLayout (layout.release ());
+
+    return widget;
+}
+
+std::unique_ptr<QWidget> ribbon::ui_gen()
+{
+    auto widget = make_unique<QWidget> ();
+    auto layout = make_unique<QHBoxLayout> ();
+
+    layout->setContentsMargins (1, 1, 1, 1);
+    layout->setSpacing (1);
+
+    auto block1_layout = make_unique<QVBoxLayout> ();
+    block1_layout->setContentsMargins (1, 1, 1, 1);
+    block1_layout->setSpacing (1);
+
+    auto upper_layout = make_unique<QHBoxLayout> ();
+    upper_layout->setContentsMargins(10, 0, 10, 0);
+    upper_layout->setSpacing (10);
+
+    constexpr auto len = 39;
+
+    {
+        auto btn = make_button (QPixmap ("png/帮助.png").scaled (len, len), "生成");
+        connect (btn.get (), &QToolButton::clicked, this, &ribbon::gen);
+        connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
+        upper_layout->addWidget (btn.release ());
+    }
+
+    block1_layout->addLayout (upper_layout.release ());
+    auto label = new QLabel ("");
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block1_layout->addWidget (label);
     layout->addLayout (block1_layout.release (), 0);

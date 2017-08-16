@@ -15,6 +15,13 @@
 #include <base/io/file/file.hpp>
 #include <boost/filesystem.hpp>
 #include <QStyleFactory>
+#include <QDebug>
+
+
+#include <boost/range/adaptor/indexed.hpp>
+using namespace boost;
+using namespace boost::adaptors;
+
 
 
 void set_style ()

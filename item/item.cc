@@ -134,7 +134,6 @@ item::item(nlohmann::json data, QPointF pos, item *parent)
 
 unique_ptr<item> item::make(nlohmann::json full_data, item *parent) try
 {
-//    qDebug () << full_data.dump(4).data();
     const string type = full_data ["detail"]["type"];
     const qreal x = full_data ["pos"]["x"];
     const qreal y = full_data ["pos"]["y"];

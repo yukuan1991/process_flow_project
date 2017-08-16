@@ -31,6 +31,7 @@ private:
     void save_subwindow (QMdiSubWindow * sub_window);
     void file_save_as();
     void print_order();
+    void generate_chart ();
 private:
     void cut();
     void copy();

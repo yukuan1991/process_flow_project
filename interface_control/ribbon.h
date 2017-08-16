@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include <QTabWidget>
 #include <base/lang/not_null.h>
 #include <memory>
@@ -25,6 +26,8 @@ signals:
     void save ();
     void save_as ();
     void quit ();
+
+    void gen ();
 
     void cut();
     void copy();
@@ -57,6 +60,7 @@ private:
     std::unique_ptr<QWidget> ui_draw ();
     std::unique_ptr<QWidget> ui_window ();
     std::unique_ptr<QWidget> ui_help ();
+    std::unique_ptr<QWidget> ui_gen ();
     std::unique_ptr<draw_graph> graph_;
     std::unique_ptr<draw_line> line_;
     bool button_enabled_;

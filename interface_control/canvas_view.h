@@ -47,6 +47,7 @@ public:
     void set_attached_file (QString attached_file) { setWindowTitle(attached_file); }
     bool load (const std::string& data);
     bool is_unsaved () { return unsaved_content_; }
+    void generate_chart (const QVariantMap &data);
 public:
     void print_render (QPrinter* printer);
     void scale_object (qreal factor);
