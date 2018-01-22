@@ -387,7 +387,7 @@ std::unique_ptr<QWidget> ribbon::ui_gen()
     constexpr auto len = 39;
 
     {
-        auto btn = make_button (QPixmap ("png/帮助.png").scaled (len, len), "生成");
+        auto btn = make_button (QPixmap ("png/生成.png").scaled (len, len), "生成");
         connect (btn.get (), &QToolButton::clicked, this, &ribbon::gen);
         connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
         upper_layout->addWidget (btn.release ());

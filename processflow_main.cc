@@ -36,13 +36,13 @@ processflow_main::~processflow_main()
 
 void processflow_main::on_view_closed()
 {
-    val ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
+    auto ret = QMessageBox::question(this, "提示", "内容尚未保存，是否保存",
                           "保存","忽略","取消");
     if (ret == 2)
     {
         return;
     }
-    var active_window = ui->mdiarea->activeSubWindow();
+    auto active_window = ui->mdiarea->activeSubWindow();
 
     if (ret == 0)
     {
@@ -54,26 +54,26 @@ void processflow_main::on_view_closed()
 
 void processflow_main::file_new()
 {
-    var canvas = create_canvas_body();
+    auto canvas = create_canvas_body();
     canvas->show();
 }
 
 void processflow_main::file_open()
 {
-    var file_name = QFileDialog::getOpenFileName(this, "打开文件", ".", "Images (*.pfs)");
+    auto file_name = QFileDialog::getOpenFileName(this, "打开文件", ".", "Images (*.pfs)");
     if (file_name.isEmpty())
     {
         return;
     }
 
-    var file_content = file::read_all(::utf_to_sys(file_name.toStdString()).data());
+    auto file_content = file::read_all(::utf_to_sys(file_name.toStdString()).data());
     if (!file_content)
     {
         QMessageBox::information(this, "打开", "打开文件失败，请检查文件是否存在");
         return;
     }
 
-    var canvas = create_canvas_body();
+    auto canvas = create_canvas_body();
     if (!canvas->load (*file_content))
     {
         QMessageBox::information(this, "打开", "打开文件失败，文件已经损坏");
@@ -155,14 +155,14 @@ void processflow_main::print_order()
 
 void processflow_main::generate_chart ()
 {
-    var view = active_canvas_view();
+    auto view = active_canvas_view();
     if (view == null)
     {
         return;
     }
-    var dlg = view->dlg ();
+    auto dlg = view->dlg ();
 
-    val res = dlg->exec ();
+    auto res = dlg->exec ();
     if (res != QDialog::Accepted)
     {
         return;

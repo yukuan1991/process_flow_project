@@ -13,7 +13,7 @@ QMAKE_CXXFLAGS += -std=c++1z
 
 RC_ICONS = png/myappico.ico
 
-TARGET = process_flow_project
+TARGET = process-flow
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -50,7 +50,10 @@ SOURCES += main.cc\
     gen_model.cc \
     gen_dlg.cc \
     gen_delegate.cc \
-    item/conn_line.cc
+    item/conn_line.cc \
+    verification/des.cc \
+    verification/encryption.cc \
+    verification/verification.cpp
 
 
 HEADERS  += \
@@ -77,7 +80,11 @@ HEADERS  += \
     gen_model.h \
     gen_dlg.h \
     gen_delegate.h \
-    item/conn_line.h
+    item/conn_line.h \
+    verification/des.h \
+    verification/encryption.h \
+    verification/verification.h \
+    verification/json.hpp
 
 
 FORMS    += \
@@ -86,10 +93,14 @@ FORMS    += \
 
 DISTFILES +=
 
-LIBS += -lboost_locale
-LIBS += -liconv
 LIBS += -lboost_filesystem
 LIBS += -lboost_system
+LIBS += -lboost_regex
+LIBS += -lboost_thread
+LIBS += -lboost_locale
+LIBS += -liconv
+LIBS += -lwininet
+LIBS += -lws2_32
 
 QMAKE_CXXFLAGS += -Wextra
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations

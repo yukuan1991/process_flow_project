@@ -16,7 +16,8 @@
 #include <boost/filesystem.hpp>
 #include <QStyleFactory>
 #include <QDebug>
-
+#include "verification/verification.h"
+#include <QTimer>
 
 #include <boost/range/adaptor/indexed.hpp>
 using namespace boost;
@@ -51,10 +52,21 @@ void set_style ()
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    if(!verification_process())
+    {
+        return -1;
+    }
+
     set_style();
     processflow_main w;
     w.resize(1366, 768);
     w.show();
+
+    QTimer timer;
+    timer.setInterval (1000);
+    timer.setSingleShot (true);
+    QObject::connect (&timer, &QTimer::timeout, [&] { check_date (); timer.start (); });
+    timer.start ();
 
     return a.exec();
 }
