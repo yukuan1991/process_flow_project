@@ -86,10 +86,10 @@ void ribbon::setup_ui()
     setup_menu();
 
     this->addTab (ui_edit ().release (), "编辑");
-    this->addTab (ui_draw ().release (), "绘图");
-    this->addTab (ui_window ().release (), "窗口");
-    this->addTab (ui_gen ().release (), "生成");
-    this->addTab (ui_help ().release (), "帮助");
+    this->addTab (ui_gen ().release (), "设置");
+    this->addTab (ui_draw ().release (), "插入");
+    this->addTab (ui_window ().release (), "视图");
+    this->addTab (ui_help ().release (), "关于");
 }
 
 unique_ptr<QWidgetAction> make_action (const QPixmap & pix, const QString & text, QWidget * parent = nullptr)
@@ -193,7 +193,7 @@ std::unique_ptr<QWidget> ribbon::ui_edit()
     }
 
     block1_layout->addLayout (upper_layout.release ());
-    auto label = new QLabel ("画布操作");
+    auto label = new QLabel ("文档操作");
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block1_layout->addWidget (label);
     layout->addLayout (block1_layout.release (), 0);
@@ -232,7 +232,7 @@ std::unique_ptr<QWidget> ribbon::ui_draw()
         block1_layout->addWidget(graph_.get());
     }
 
-    auto label = new QLabel ("绘制图形");
+    auto label = new QLabel ("图形");
 
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block1_layout->addWidget (label);
@@ -259,7 +259,7 @@ std::unique_ptr<QWidget> ribbon::ui_draw()
     }
 
 
-    label = new QLabel ("绘制连线");
+    label = new QLabel ("连线");
 
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block2_layout->addWidget (label);
@@ -387,14 +387,14 @@ std::unique_ptr<QWidget> ribbon::ui_gen()
     constexpr auto len = 39;
 
     {
-        auto btn = make_button (QPixmap ("png/生成.png").scaled (len, len), "生成");
+        auto btn = make_button (QPixmap ("png/生成.png").scaled (len, len), "工艺流程");
         connect (btn.get (), &QToolButton::clicked, this, &ribbon::gen);
         connect (this, &ribbon::set_enabled, btn.get(), &ribbon_tool::setEnabled);
         upper_layout->addWidget (btn.release ());
     }
 
     block1_layout->addLayout (upper_layout.release ());
-    auto label = new QLabel ("");
+    auto label = new QLabel ("属性设置");
     label->setAlignment (Qt::AlignHCenter | Qt::AlignBottom);
     block1_layout->addWidget (label);
     layout->addLayout (block1_layout.release (), 0);

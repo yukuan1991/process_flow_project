@@ -26,6 +26,7 @@ processflow_main::processflow_main(QWidget *parent) :
     set_button_enabled();
     ui->mdiarea->setViewMode(QMdiArea::TabbedView);
     setWindowIcon(QIcon("png/工艺流程图标.png"));
+    setWindowTitle("Process Flowchart");
     init_conn();
 }
 
